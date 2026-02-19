@@ -1,9 +1,9 @@
 baseURL = "https://yoongang02.github.io"
-copyright = "{year}" # To make 2007 - 2022. Just add before {year} example: 2007 - {year}
+copyright = "{year} Yoon Kyoungmin"
 languageCode = 'en-US'
 defaultContentLanguage = 'en'
 theme = 'lowkey'
-title = 'Enhanced Lowkey Hugo'
+title = "Yoon Kyoungmin"
 enableRobotsTXT = true
 summaryLength = 15
 paginate = 5

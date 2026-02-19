@@ -1,0 +1,17 @@
+{{ define "main" }}
+
+<div class="py-2 flex flex-col gap-1">
+  <h3 class="title-small">최신 글</h3>
+<div>
+
+<hr>
+
+<section class="pb-10 flex flex-col gap-10">
+    {{ $posts := where .Site.RegularPages "Section" "posts" }}
+    {{ range first 5 ($posts.ByDate.Reverse) }}
+      {{ partial "list/default" . }}
+    {{ end }}
+</section>
+
+
+{{ end }}

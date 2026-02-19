@@ -30,20 +30,15 @@
     
 # Social Media Configuration
 
-[[social]]
-    identifier = "twitter"
-    name = "Twitter"
-    url = "#"
-    weight = 1
 
 [[social]]
     identifier = "instagram"
-    name = "Instagram"
+    name = "LinkedIn"
     url = "#"
     weight = 2
 
 [[social]]
     identifier = "github"
     name = "GitHub"
-    url = "#"
+    url = "https://github.com/yoongang02"
     weight = 3
