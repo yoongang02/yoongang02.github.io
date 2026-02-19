@@ -1,0 +1,90 @@
+{{ $thumbURL := "" }}
+{{ with .Resources.GetMatch "thumbnail.jpg" }}
+  {{ $img := .Fill "300x300 q80" }}
+  {{ $thumbURL = $img.RelPermalink }}
+{{ end }}
+
+{{ if $thumbURL }}
+
+<article class="grid grid-cols-[1fr_auto] items-start" style="column-gap:20px;">
+
+  {{/* MUST be direct child of article for `article > h1` CSS */}}
+  <h1 style="grid-column:1;">
+    <a href="{{ .Permalink }}">{{ .Title }}</a>
+  </h1>
+
+  {{/* Right fixed thumbnail (140x140) */}}
+  <a href="{{ .Permalink }}" class="shrink-0" style="grid-column:2; grid-row:1 / span 2;">
+    <div style="width:140px; height:140px; overflow:hidden; border-radius:6px; margin-top:20px;">
+      <img
+        src="{{ $thumbURL }}"
+        alt="{{ .Title }}"
+        style="width:100%; height:100%; object-fit:cover;"
+        loading="lazy"
+      />
+    </div>
+  </a>
+
+  {{/* Left details under title */}}
+  <div class="flex flex-col gap-1" style="grid-column:1;">
+    <span class="date">
+      <time datetime="{{ .PublishDate }}" title='{{ .PublishDate.Format "Mon, Jan 2, 2006, 3:04 PM MST" }}'>
+        {{ .PublishDate.Format "02/01/2006" }}
+      </time>
+    </span>
+
+    <div class="description">
+      {{ if .Params.description }}
+        {{ .Params.description }}
+      {{ else if .Summary }}
+        {{ .Summary }}
+      {{ end }}
+    </div>
+
+    <div class="mt-2">
+      <a class="read-more" href="{{ .Permalink }}">
+        {{ i18n "readMore" }}
+        <span class="w-4 h-4 stroke-2">
+          {{ partial "utils/icon" "arrow-right" }}
+        </span>
+      </a>
+    </div>
+  </div>
+
+</article>
+
+{{ else }}
+
+{{/* 기존 레이아웃 유지 */}}
+<article class="flex flex-col gap-1">
+  <h1>
+    <a href="{{ .Permalink }}">{{ .Title }}</a>
+  </h1>
+  
+  <span class="date">
+    <time datetime="{{ .PublishDate }}" title='{{ .PublishDate.Format "Mon, Jan 2, 2006, 3:04 PM MST" }}'>
+      {{ .PublishDate.Format "02/01/2006" }}
+    </time>
+  </span>
+
+  <div class="description">
+    {{ if .Params.description }}
+      {{ .Params.description }}
+    {{ else if .Summary }}
+      {{ .Summary }}
+    {{ end }}
+  </div>
+
+  <div class="mt-2">
+    <a class="read-more" href="{{ .Permalink }}">
+      {{ i18n "readMore" }}
+      <span class="w-4 h-4 stroke-2">
+        {{ partial "utils/icon" "arrow-right" }}
+      </span>
+    </a>
+  </div>
+</article>
+
+{{ end }}
+
+
