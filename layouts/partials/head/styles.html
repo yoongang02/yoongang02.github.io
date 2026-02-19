@@ -9,6 +9,7 @@
 {{- $styles := slice $tailwind | resources.Concat "css/app.css" -}} 
 
 {{/* Output */}} 
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css" />
 {{- if eq hugo.Environment "development" -}}
     <link rel="stylesheet" href="{{ $styles.Permalink | absURL }}" />
 {{- else -}} 

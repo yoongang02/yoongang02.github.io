@@ -5,28 +5,22 @@
     weight = 1
 
 [[main]]
-    identifier = "about"
-    name = "About me"
-    url = "/about"
+    identifier = "study"
+    name = "Study"
+    url = "/study"
     weight = 2
 
 [[main]]
-    identifier = "categories"
-    name = "Categories"
-    url = "/categories"
+    identifier = "projects"
+    name = "Projects"
+    url = "/projects"
     weight = 3
 
 [[main]]
-    identifier = "tags"
-    name = "Tags"
-    url = "/tags"
+    identifier = "ideas"
+    name = "Ideas"
+    url = "/ideas"
     weight = 4
-
-[[main]]
-    identifier = "donate"
-    name = "Donate"
-    url = "https://ko-fi.com/nixentric"
-    weight = 5
     
 # Social Media Configuration
 
