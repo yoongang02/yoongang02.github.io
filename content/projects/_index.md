@@ -1,8 +1,6 @@
 ---
-title: "Categories"
+title: "Projects"
 draft: false
-type: taxonomies
-layout: "home"
 ---
 
-Our Categories Collection
+Projects and build notes.

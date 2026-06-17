@@ -1,8 +1,6 @@
 ---
-title: "Tags"
+title: "Ideas"
 draft: false
-type: taxonomies
-layout: "home"
 ---
 
-Our Tags Collection
+Ideas, sketches, and short thoughts.
