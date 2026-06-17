@@ -4,7 +4,7 @@
 {{ $pages = $pages.ByDate.Reverse }}
 {{ $paginator := .Paginate $pages }}
 
-<div class="flex flex-col gap-1">
+<div class="py-2 flex flex-col gap-1">
   <h1 class="title-small">
     {{ if .Params.header }}
       {{ .Params.header }}
@@ -12,13 +12,11 @@
       {{ .Title }}
     {{ end }}
   </h1>
-
-  {{ with .Content }}
-    {{ . }}
-  {{ end }}
 </div>
 
-<section class="flex flex-col gap-10">
+<hr>
+
+<section class="pb-10 flex flex-col gap-10">
   {{ range $paginator.Pages }}
     {{ partial "list/default" . }}
   {{ end }}
