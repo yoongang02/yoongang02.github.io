@@ -9,3 +9,5 @@ tags:
 ---
 
 This is a dummy study post used to verify the Study section.
+
+![Study dummy image 03](inline-image.jpg)

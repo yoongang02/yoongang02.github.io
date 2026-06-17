@@ -1,21 +1,25 @@
 {{ $thumbURL := "" }}
-{{ with .Resources.GetMatch "thumbnail.jpg" }}
-  {{ $img := .Fill "300x300 q80" }}
-  {{ $thumbURL = $img.RelPermalink }}
+{{ $page := . }}
+{{ $imageMatches := findRESubmatch `<img[^>]+src=["']([^"']+)["']` .Content 1 }}
+{{ with index $imageMatches 0 }}
+  {{ $thumbURL = index . 1 }}
+  {{ if not (or (hasPrefix $thumbURL "/") (hasPrefix $thumbURL "http://") (hasPrefix $thumbURL "https://")) }}
+    {{ $thumbURL = printf "%s%s" $page.RelPermalink $thumbURL }}
+  {{ end }}
 {{ end }}
 
 {{ if $thumbURL }}
 
-<article class="grid grid-cols-[1fr_auto] items-start" style="column-gap:20px;">
+<article class="grid items-start" style="grid-template-columns:minmax(0, 1fr) 133px; column-gap:20px;">
 
   {{/* MUST be direct child of article for `article > h1` CSS */}}
-  <h1 style="grid-column:1;">
-    <a href="{{ .Permalink }}">{{ .Title }}</a>
+  <h1 style="grid-column:1; min-width:0;">
+    <a href="{{ .Permalink }}" style="display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ .Title }}</a>
   </h1>
 
-  {{/* Right fixed thumbnail (140x140) */}}
-  <a href="{{ .Permalink }}" class="shrink-0" style="grid-column:2; grid-row:1 / span 2;">
-    <div style="width:140px; height:140px; overflow:hidden; border-radius:6px; margin-top:20px;">
+  {{/* Right thumbnail uses the first image found in the post body. */}}
+  <a href="{{ .Permalink }}" class="shrink-0" style="grid-column:2; grid-row:1 / span 2; width:133px;">
+    <div style="width:133px; height:133px; overflow:hidden; border-radius:6px;">
       <img
         src="{{ $thumbURL }}"
         alt="{{ .Title }}"
@@ -26,14 +30,14 @@
   </a>
 
   {{/* Left details under title */}}
-  <div class="flex flex-col gap-1" style="grid-column:1;">
+  <div class="flex flex-col gap-1" style="grid-column:1; min-width:0;">
     <span class="date">
       <time datetime="{{ .PublishDate }}" title='{{ .PublishDate.Format "Mon, Jan 2, 2006, 3:04 PM MST" }}'>
         {{ .PublishDate.Format "02/01/2006" }}
       </time>
     </span>
 
-    <div class="description">
+    <div class="description" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
       {{ if .Params.description }}
         {{ .Params.description }}
       {{ else if .Summary }}
@@ -58,7 +62,7 @@
 {{/* 기존 레이아웃 유지 */}}
 <article class="flex flex-col gap-1">
   <h1>
-    <a href="{{ .Permalink }}">{{ .Title }}</a>
+    <a href="{{ .Permalink }}" style="display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ .Title }}</a>
   </h1>
   
   <span class="date">
@@ -67,7 +71,7 @@
     </time>
   </span>
 
-  <div class="description">
+  <div class="description" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
     {{ if .Params.description }}
       {{ .Params.description }}
     {{ else if .Summary }}
@@ -86,5 +90,3 @@
 </article>
 
 {{ end }}
-
-

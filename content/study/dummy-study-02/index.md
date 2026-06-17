@@ -1,8 +1,8 @@
 ---
-title: "Study Dummy Note 02"
+title: "Study Dummy Note 02 Without Thumbnail But With A Very Long Title"
 date: 2026-06-16T09:00:00+09:00
 draft: false
-description: "A sample study note for checking date ordering."
+description: "This long description checks that text-only list items also stay on one line and use an ellipsis when the content becomes too wide."
 tags:
   - Study
   - Dummy

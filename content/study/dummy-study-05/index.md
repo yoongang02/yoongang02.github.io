@@ -9,3 +9,5 @@ tags:
 ---
 
 This is a dummy study post used to test navigation into posts.
+
+![Study dummy image 05](inline-image.jpg)

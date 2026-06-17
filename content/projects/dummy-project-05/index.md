@@ -9,3 +9,5 @@ tags:
 ---
 
 This is a dummy project post used to test navigation into posts.
+
+![Project dummy image 05](inline-image.jpg)

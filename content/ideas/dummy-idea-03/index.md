@@ -9,3 +9,5 @@ tags:
 ---
 
 This is a dummy idea post used to verify the Ideas section.
+
+![Idea dummy image 03](inline-image.jpg)
