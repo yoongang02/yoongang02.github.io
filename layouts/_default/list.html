@@ -1,6 +1,7 @@
 {{ define "main" }}
 
-{{ $pages := .RegularPages.ByDate.Reverse }}
+{{ $pages := where .Site.RegularPages "Section" .Section }}
+{{ $pages = $pages.ByDate.Reverse }}
 {{ $paginator := .Paginate $pages }}
 
 <div class="flex flex-col gap-1">
