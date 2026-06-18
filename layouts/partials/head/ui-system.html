@@ -1,0 +1,106 @@
+<style>
+  :root {
+    --ui-bg: #ffffff;
+    --ui-text-primary: #111827;
+    --ui-text-secondary: #4b5563;
+    --ui-border: #9ca3af;
+    --ui-surface: #f3f4f6;
+    --ui-surface-strong: #e5e7eb;
+    --ui-action: #1f2937;
+    --ui-action-hover: #374151;
+    --ui-action-text: #ffffff;
+    --ui-accent: #15803d;
+    --ui-accent-hover: #166534;
+    --ui-focus: #22c55e;
+  }
+
+  .dark {
+    --ui-bg: #111827;
+    --ui-text-primary: #f3f4f6;
+    --ui-text-secondary: #9ca3af;
+    --ui-border: #4b5563;
+    --ui-surface: #1f2937;
+    --ui-surface-strong: #374151;
+    --ui-action: #e5e7eb;
+    --ui-action-hover: #ffffff;
+    --ui-action-text: #111827;
+    --ui-accent: #4ade80;
+    --ui-accent-hover: #86efac;
+    --ui-focus: #4ade80;
+  }
+
+  body {
+    color: var(--ui-text-secondary);
+    background: var(--ui-bg);
+  }
+
+  body h1,
+  body h2,
+  body h3,
+  body h4,
+  body h5,
+  body h6,
+  body #site-title,
+  body .title-large,
+  body .title-small {
+    color: var(--ui-text-primary);
+  }
+
+  .dark body h1,
+  .dark body h2,
+  .dark body h3,
+  .dark body h4,
+  .dark body h5,
+  .dark body h6,
+  .dark body #site-title,
+  .dark body .title-large,
+  .dark body .title-small {
+    color: var(--ui-text-primary);
+  }
+
+  nav a,
+  footer a {
+    color: var(--ui-text-secondary);
+  }
+
+  nav a:hover,
+  footer a:hover,
+  nav a.active {
+    color: var(--ui-text-primary);
+  }
+
+  #content a {
+    color: var(--ui-accent);
+  }
+
+  #content a:hover {
+    color: var(--ui-accent-hover);
+  }
+
+  .header .toggle-theme {
+    display: flex;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    align-items: center;
+    justify-content: center;
+    color: var(--ui-text-primary);
+  }
+
+  .header .toggle-theme .theme-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--ui-focus);
+    outline-offset: 3px;
+  }
+
+  .post-card-arrow:focus-visible,
+  .post-pagination-button:focus-visible {
+    outline-offset: 2px;
+  }
+</style>

@@ -1,0 +1,78 @@
+{{ define "main" }}
+
+{{ if eq .Kind "term" }}
+  {{ partial "list/card-styles" . }}
+
+  {{ $pages := .Pages.ByDate.Reverse }}
+  {{ $paginator := .Paginate $pages }}
+
+  <div class="py-2 flex flex-col gap-1">
+    <h1 class="title-small">#{{ .Title }}</h1>
+  </div>
+
+  <section class="post-grid pb-10">
+    {{ range $paginator.Pages }}
+      {{ partial "list/default" . }}
+    {{ end }}
+  </section>
+
+  {{ partial "list/pagination" . }}
+{{ else }}
+  <div class="py-2 flex flex-col gap-1">
+    <h1 class="title-small">{{ .Title }}</h1>
+  </div>
+
+  <ul class="term-index" aria-label="{{ .Title }} 목록">
+    {{ range .Pages.ByTitle }}
+      <li>
+        <a href="{{ .RelPermalink }}">
+          <span>#{{ .LinkTitle }}</span>
+          <span>{{ len .Pages }}</span>
+        </a>
+      </li>
+    {{ end }}
+  </ul>
+{{ end }}
+
+<style>
+  .term-index {
+    display: grid;
+    margin: 0 0 40px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    list-style: none;
+  }
+
+  .term-index li {
+    margin-right: -1px;
+    margin-bottom: -1px;
+    border: 1px solid var(--ui-border);
+  }
+
+  #content .term-index a {
+    display: flex;
+    min-height: 56px;
+    padding: 14px 16px;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--ui-text-primary);
+    text-decoration: none;
+  }
+
+  #content .term-index a:hover {
+    color: var(--ui-accent);
+    background: var(--ui-surface);
+  }
+
+  .term-index a span:last-child {
+    color: var(--ui-text-secondary);
+    font-size: 14px;
+  }
+
+  @media (max-width: 639px) {
+    .term-index {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
+
+{{ end }}

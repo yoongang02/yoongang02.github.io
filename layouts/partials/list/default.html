@@ -34,19 +34,29 @@
     </h1>
   </div>
 
-  <div class="post-card-meta-part">
-    <div class="post-card-meta">
-      <span class="post-card-category">{{ .Section | title }}</span>
-      <span class="post-card-divider" aria-hidden="true"></span>
-      <time datetime="{{ .PublishDate }}" title='{{ .PublishDate.Format "Mon, Jan 2, 2006, 3:04 PM MST" }}'>
-        {{ .PublishDate.Format "2006.01.02" }}
-      </time>
-    </div>
+  <div class="post-card-footer">
+    {{ with .GetTerms "tags" }}
+      <div class="post-card-tags" aria-label="게시글 태그">
+        {{ range . }}
+          <a href="{{ .RelPermalink }}">#{{ .LinkTitle }}</a>
+        {{ end }}
+      </div>
+    {{ end }}
 
-    <a class="post-card-arrow" href="{{ .Permalink }}" aria-label="{{ .Title }} 더보기">
-      <span>
-        {{ partial "utils/icon" "arrow-right" }}
-      </span>
-    </a>
+    <div class="post-card-meta-part">
+      <div class="post-card-meta">
+        <span class="post-card-category">{{ .Section | title }}</span>
+        <span class="post-card-divider" aria-hidden="true"></span>
+        <time datetime="{{ .PublishDate }}" title='{{ .PublishDate.Format "Mon, Jan 2, 2006, 3:04 PM MST" }}'>
+          {{ .PublishDate.Format "2006.01.02" }}
+        </time>
+      </div>
+
+      <a class="post-card-arrow" href="{{ .Permalink }}" aria-label="{{ .Title }} 더보기">
+        <span>
+          {{ partial "utils/icon" "arrow-right" }}
+        </span>
+      </a>
+    </div>
   </div>
 </article>

@@ -44,7 +44,7 @@
     height: 44px;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgb(31 41 55);
+    border: 1px solid var(--ui-action);
     text-decoration: none;
   }
 
@@ -63,36 +63,18 @@
   }
 
   #content .post-pagination-button.is-active {
-    color: white;
-    background: rgb(31 41 55);
+    color: var(--ui-action-text);
+    background: var(--ui-action);
   }
 
   #content .post-pagination-button.is-active:hover {
-    color: white;
-    background: rgb(55 65 81);
+    color: var(--ui-action-text);
+    background: var(--ui-action-hover);
   }
 
   #content .post-pagination-button.is-disabled {
-    color: rgb(31 41 55);
-    background: white;
+    color: var(--ui-action);
+    background: var(--ui-bg);
     cursor: default;
-  }
-
-  .dark #content .post-pagination-button {
-    border-color: rgb(229 231 235);
-  }
-
-  .dark #content .post-pagination-button.is-active {
-    color: rgb(17 24 39);
-    background: rgb(229 231 235);
-  }
-
-  .dark #content .post-pagination-button.is-active:hover {
-    background: white;
-  }
-
-  .dark #content .post-pagination-button.is-disabled {
-    color: rgb(229 231 235);
-    background: rgb(17 24 39);
   }
 </style>
