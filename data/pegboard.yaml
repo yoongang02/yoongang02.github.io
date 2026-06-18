@@ -1,0 +1,25 @@
+board:
+  image: "/img/pegboard/board.png"
+  label: "게시글 마그넷 보드"
+
+magnet_defaults:
+  size: 9
+
+magnets:
+  - image: "/img/pegboard/magnets/mario-star.png"
+    post: "/ideas/dummy-idea-01"
+    alt: "슈퍼마리오 별 마그넷"
+    size: 9
+    rotation: -7
+
+  - image: "/img/pegboard/magnets/kirby.png"
+    post: "/projects/dummy-project-01"
+    alt: "커비 마그넷"
+    size: 10
+    rotation: 5
+
+  - image: "/img/pegboard/magnets/toy-story-alien.png"
+    post: "/study/dummy-study-01"
+    alt: "토이스토리 외계인 마그넷"
+    size: 8.5
+    rotation: -3

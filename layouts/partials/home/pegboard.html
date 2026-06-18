@@ -1,0 +1,63 @@
+{{- with hugo.Data.pegboard -}}
+  {{- $board := .board -}}
+  {{- $defaults := .magnet_defaults -}}
+  {{- $resolvedMagnets := slice -}}
+
+  {{- range .magnets -}}
+    {{- $config := . -}}
+    {{- $page := site.GetPage .post -}}
+    {{- with $page -}}
+      {{- $resolvedMagnets = $resolvedMagnets | append (dict "config" $config "page" .) -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- if gt (len $resolvedMagnets) 0 -}}
+    <section
+      class="pegboard"
+      aria-label="{{ $board.label | default `게시글 마그넷 보드` }}"
+      data-pegboard
+    >
+      <div
+        class="pegboard-surface"
+        style="--pegboard-image: url('{{ $board.image | relURL }}');"
+      >
+        {{- range $index, $magnet := $resolvedMagnets -}}
+          {{- $config := $magnet.config -}}
+          {{- $page := $magnet.page -}}
+          {{- $size := $config.size | default $defaults.size | default 18 -}}
+          {{- $rotation := $config.rotation | default 0 -}}
+          {{- $tooltipID := printf "pegboard-tooltip-%d" $index -}}
+
+          <a
+            class="pegboard-magnet"
+            href="{{ $page.RelPermalink }}"
+            aria-label="{{ $page.Title }}"
+            aria-describedby="{{ $tooltipID }}"
+            data-pegboard-magnet
+            data-index="{{ $index }}"
+            {{- with $config.x }} data-x="{{ . }}"{{ end -}}
+            {{- with $config.y }} data-y="{{ . }}"{{ end -}}
+            style="--magnet-size: {{ $size }}; --magnet-rotation: {{ $rotation }}deg;"
+          >
+            <img
+              class="pegboard-magnet-image"
+              src="{{ $config.image | relURL }}"
+              alt="{{ $config.alt | default $page.Title }}"
+              loading="eager"
+              decoding="async"
+            />
+            <span class="pegboard-tooltip" id="{{ $tooltipID }}" role="tooltip">
+              <span class="pegboard-tag-title">{{ $page.Title }}</span>
+            </span>
+          </a>
+        {{- end -}}
+      </div>
+    </section>
+
+    {{- $script := resources.Get "js/pegboard.js" -}}
+    {{- if hugo.IsProduction -}}
+      {{- $script = $script | minify | fingerprint -}}
+    {{- end -}}
+    <script src="{{ $script.RelPermalink }}"{{ with $script.Data.Integrity }} integrity="{{ . }}" crossorigin="anonymous"{{ end }} defer></script>
+  {{- end -}}
+{{- end -}}

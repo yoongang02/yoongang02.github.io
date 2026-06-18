@@ -1,0 +1,266 @@
+.pegboard {
+  margin: 4px 0 15px;
+}
+
+.home-page .header > header {
+  padding-bottom: 1.5rem;
+}
+
+.pegboard-surface {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  aspect-ratio: 4 / 1;
+  overflow: visible;
+  border: 1px solid rgba(17, 24, 39, 0.22);
+  border-radius: 10px;
+  background-color: #4c91dc;
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.04)),
+    var(--pegboard-image);
+  background-position: center;
+  background-size: cover;
+  box-shadow:
+    0 18px 42px rgba(15, 23, 42, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+.pegboard-magnet {
+  --magnet-x: 50;
+  --magnet-y: 50;
+  position: absolute;
+  z-index: 1;
+  left: calc(var(--magnet-x) * 1%);
+  top: calc(var(--magnet-y) * 1%);
+  display: block;
+  width: clamp(28px, calc(var(--magnet-size) * 1%), 92px);
+  color: inherit !important;
+  text-decoration: none !important;
+  transform:
+    translate(-50%, -50%)
+    rotate(var(--magnet-rotation));
+  transform-origin: center;
+  transition: z-index 0s 180ms;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pegboard-magnet:hover,
+.pegboard-magnet:focus-visible,
+.pegboard-magnet.is-active {
+  z-index: 20;
+  transition-delay: 0s;
+}
+
+.pegboard-magnet-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  filter:
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.88))
+    drop-shadow(1px 0 0 rgba(255, 255, 255, 0.88))
+    drop-shadow(0 -1px 0 rgba(255, 255, 255, 0.88))
+    drop-shadow(-1px 0 0 rgba(255, 255, 255, 0.88))
+    drop-shadow(0 4px 2px rgba(15, 23, 42, 0.34))
+    drop-shadow(0 10px 9px rgba(15, 23, 42, 0.24));
+  transform: translateY(0) scale(1);
+  transform-origin: center;
+  transition:
+    filter 220ms ease,
+    transform 220ms cubic-bezier(0.2, 0.75, 0.25, 1);
+}
+
+.pegboard-magnet:hover .pegboard-magnet-image,
+.pegboard-magnet:focus-visible .pegboard-magnet-image,
+.pegboard-magnet.is-active .pegboard-magnet-image {
+  filter:
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.95))
+    drop-shadow(1px 0 0 rgba(255, 255, 255, 0.95))
+    drop-shadow(0 -1px 0 rgba(255, 255, 255, 0.95))
+    drop-shadow(-1px 0 0 rgba(255, 255, 255, 0.95))
+    drop-shadow(0 6px 3px rgba(15, 23, 42, 0.3))
+    drop-shadow(0 14px 12px rgba(15, 23, 42, 0.28));
+  transform: translateY(-5px) scale(1.045);
+}
+
+.pegboard-tooltip {
+  position: absolute;
+  z-index: 30;
+  left: 50%;
+  bottom: calc(100% + 20px);
+  display: flex;
+  width: 250px;
+  min-height: 66px;
+  max-width: min(250px, 76vw);
+  padding: 12px 18px 11px 38px;
+  border: 1px solid rgba(17, 24, 39, 0.18);
+  border-radius: 3px;
+  align-items: center;
+  color: #111827;
+  background-color: rgba(252, 252, 250, 0.97);
+  background-image:
+    linear-gradient(105deg, rgba(255, 255, 255, 0.72), rgba(224, 224, 218, 0.18) 52%, rgba(255, 255, 255, 0.58)),
+    repeating-linear-gradient(0deg, rgba(17, 24, 39, 0.018) 0 1px, transparent 1px 3px);
+  box-shadow:
+    0 8px 20px rgba(15, 23, 42, 0.17),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  text-align: center;
+  white-space: normal;
+  pointer-events: none;
+  opacity: 0;
+  transform:
+    translate(-50%, 5px)
+    rotate(calc(var(--magnet-rotation) * -1))
+    scale(0.94);
+  transform-origin: bottom center;
+  visibility: hidden;
+  transition:
+    opacity 150ms ease,
+    transform 180ms cubic-bezier(0.2, 0.75, 0.25, 1),
+    visibility 0s 180ms;
+}
+
+.pegboard-tooltip::before {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  width: 11px;
+  height: 11px;
+  border: 2px solid rgba(17, 24, 39, 0.72);
+  border-radius: 50%;
+  background: #4c91dc;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.55);
+  content: "";
+  transform: translateY(-50%);
+}
+
+.pegboard-tooltip::after {
+  position: absolute;
+  top: 50%;
+  left: -10px;
+  width: 27px;
+  height: 3px;
+  border-radius: 2px;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      #f4f4f1 0 1px,
+      #a9aaa7 1px 2px,
+      #ecece8 2px 3px
+    );
+  content: "";
+  filter: drop-shadow(1px 1px 1px rgba(15, 23, 42, 0.35));
+  transform: translateY(-50%) rotate(10deg);
+  transform-origin: right center;
+}
+
+.pegboard-tag-title {
+  display: -webkit-box;
+  width: 100%;
+  overflow: hidden;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: left;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.pegboard-magnet:hover .pegboard-tooltip,
+.pegboard-magnet:focus-visible .pegboard-tooltip,
+.pegboard-magnet.is-active .pegboard-tooltip {
+  opacity: 1;
+  transform:
+    translate(-50%, 0)
+    rotate(calc(var(--magnet-rotation) * -1))
+    scale(1);
+  visibility: visible;
+  transition-delay: 70ms, 70ms, 0s;
+}
+
+.pegboard-magnet.tooltip-below .pegboard-tooltip {
+  top: calc(100% + 20px);
+  bottom: auto;
+  transform-origin: top center;
+}
+
+.pegboard-magnet:not(.tooltip-below) .pegboard-tooltip::before {
+  top: 50%;
+  bottom: auto;
+}
+
+.pegboard-magnet:not(.tooltip-below) .pegboard-tooltip::after {
+  top: 50%;
+  bottom: auto;
+  transform: translateY(-50%) rotate(-10deg);
+}
+
+.pegboard-magnet.tooltip-right .pegboard-tooltip {
+  right: auto;
+  left: 0;
+  transform:
+    translate(0, 5px)
+    rotate(calc(var(--magnet-rotation) * -1))
+    scale(0.94);
+}
+
+.pegboard-magnet.tooltip-right:hover .pegboard-tooltip,
+.pegboard-magnet.tooltip-right:focus-visible .pegboard-tooltip,
+.pegboard-magnet.tooltip-right.is-active .pegboard-tooltip {
+  transform:
+    translate(0, 0)
+    rotate(calc(var(--magnet-rotation) * -1))
+    scale(1);
+}
+
+.pegboard-magnet.tooltip-left .pegboard-tooltip {
+  right: 0;
+  left: auto;
+  transform:
+    translate(0, 5px)
+    rotate(calc(var(--magnet-rotation) * -1))
+    scale(0.94);
+}
+
+.pegboard-magnet.tooltip-left:hover .pegboard-tooltip,
+.pegboard-magnet.tooltip-left:focus-visible .pegboard-tooltip,
+.pegboard-magnet.tooltip-left.is-active .pegboard-tooltip {
+  transform:
+    translate(0, 0)
+    rotate(calc(var(--magnet-rotation) * -1))
+    scale(1);
+}
+
+@media (max-width: 639px) {
+  .pegboard {
+    margin-bottom: 12px;
+  }
+
+  .pegboard-magnet {
+    width: clamp(26px, calc(var(--magnet-size) * 1%), 45px);
+  }
+
+  .pegboard-tooltip {
+    width: 210px;
+    min-height: 58px;
+    max-width: min(210px, 76vw);
+    padding: 9px 13px 8px 34px;
+  }
+
+  .pegboard-tag-title {
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pegboard-magnet,
+  .pegboard-magnet-image,
+  .pegboard-tooltip {
+    transition-duration: 0.01ms !important;
+  }
+}
