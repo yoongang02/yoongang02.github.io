@@ -1,11 +1,11 @@
 ---
-title: "Idea Dummy Sketch 04"
+title: "카드 배치를 확인하는 아이디어 기록"
 date: 2026-06-14T11:00:00+09:00
 draft: false
-description: "A sample idea sketch for layout testing."
+description: "아이디어 카드의 내부 여백과 정렬 상태를 확인합니다."
 tags:
-  - Ideas
-  - Dummy
+  - 아이디어
+  - 더미
 ---
 
-This is a dummy idea post used to test list layout spacing.
+아이디어 목록에서 카드 사이의 선과 내부 여백을 확인하기 위한 예시 글입니다.

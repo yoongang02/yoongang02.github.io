@@ -1,13 +1,13 @@
 ---
-title: "Project Dummy Log 03"
+title: "페이지네이션을 확인하는 프로젝트 기록"
 date: 2026-06-15T10:00:00+09:00
 draft: false
-description: "A sample project log for checking pagination behavior."
+description: "프로젝트 목록의 페이지 이동과 게시글 수를 확인합니다."
 tags:
-  - Projects
-  - Dummy
+  - 프로젝트
+  - 더미
 ---
 
-This is a dummy project post used to verify the Projects section.
+프로젝트 섹션의 페이지네이션 동작을 확인하기 위한 예시 글입니다.
 
-![Project dummy image 03](inline-image.jpg)
+![프로젝트 기록 예시 이미지 03](inline-image.jpg)

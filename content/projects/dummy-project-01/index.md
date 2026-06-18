@@ -1,13 +1,13 @@
 ---
-title: "Project Dummy Log 01 With An Extremely Long Title To Verify Ellipsis"
+title: "말줄임 표시를 확인하기 위한 아주 긴 프로젝트 개발 기록 제목"
 date: 2026-06-17T10:00:00+09:00
 draft: false
-description: "This is a deliberately long project description that should be truncated with an ellipsis before it pushes the thumbnail away from the right edge."
+description: "긴 프로젝트 제목이 카드 영역을 벗어나지 않고 자연스럽게 표시되는지 확인합니다."
 tags:
-  - Projects
-  - Dummy
+  - 프로젝트
+  - 더미
 ---
 
-This is a dummy project post used to verify the Projects section list.
+프로젝트 섹션의 게시글 목록과 긴 제목 표시를 확인하기 위한 예시 글입니다.
 
-![Project dummy image 01](inline-image.jpg)
+![프로젝트 기록 예시 이미지 01](inline-image.jpg)

@@ -1,13 +1,13 @@
 ---
-title: "Study Dummy Note 03"
+title: "페이지네이션을 확인하는 학습 기록"
 date: 2026-06-15T09:00:00+09:00
 draft: false
-description: "A sample study note for checking pagination behavior."
+description: "한 페이지에 표시되는 게시글 수와 페이지 이동을 확인합니다."
 tags:
-  - Study
-  - Dummy
+  - 학습
+  - 더미
 ---
 
-This is a dummy study post used to verify the Study section.
+학습 섹션의 페이지네이션 동작을 확인하기 위한 예시 글입니다.
 
-![Study dummy image 03](inline-image.jpg)
+![학습 기록 예시 이미지 03](inline-image.jpg)

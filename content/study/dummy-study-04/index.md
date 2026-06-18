@@ -1,11 +1,11 @@
 ---
-title: "Study Dummy Note 04"
+title: "카드 배치를 확인하는 학습 기록"
 date: 2026-06-14T09:00:00+09:00
 draft: false
-description: "A sample study note for layout testing."
+description: "게시글 카드의 간격과 정렬 상태를 확인합니다."
 tags:
-  - Study
-  - Dummy
+  - 학습
+  - 더미
 ---
 
-This is a dummy study post used to test list layout spacing.
+학습 목록에서 카드 사이의 선과 내부 여백을 확인하기 위한 예시 글입니다.

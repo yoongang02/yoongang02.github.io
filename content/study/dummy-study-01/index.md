@@ -1,13 +1,13 @@
 ---
-title: "Study Dummy Note 01 With An Extremely Long Title To Verify Ellipsis"
+title: "말줄임 표시를 확인하기 위한 아주 긴 학습 기록 제목 예시"
 date: 2026-06-17T09:00:00+09:00
 draft: false
-description: "This is a deliberately long study description that should be truncated with an ellipsis before it pushes the thumbnail away from the right edge."
+description: "긴 제목과 본문이 카드 안에서 자연스럽게 정리되는지 확인하기 위한 학습 기록입니다."
 tags:
-  - Study
-  - Dummy
+  - 학습
+  - 더미
 ---
 
-This is a dummy study post used to verify the Study section list.
+학습 섹션의 게시글 목록과 긴 제목 표시를 확인하기 위한 예시 글입니다.
 
-![Study dummy image 01](inline-image.jpg)
+![학습 기록 예시 이미지 01](inline-image.jpg)

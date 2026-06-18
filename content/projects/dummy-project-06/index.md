@@ -1,11 +1,11 @@
 ---
-title: "Project Dummy Log 06"
+title: "프로젝트 섹션 구성을 확인하는 기록"
 date: 2026-06-12T10:00:00+09:00
 draft: false
-description: "A sample project log for section testing."
+description: "프로젝트 섹션에 속한 게시글만 표시되는지 확인합니다."
 tags:
-  - Projects
-  - Dummy
+  - 프로젝트
+  - 더미
 ---
 
-This is a dummy project post used as extra sample content.
+프로젝트 섹션의 목록 구성을 확인하기 위해 추가한 예시 글입니다.

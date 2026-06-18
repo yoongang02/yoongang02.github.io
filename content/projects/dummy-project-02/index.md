@@ -1,11 +1,11 @@
 ---
-title: "Project Dummy Log 02 Without Thumbnail But With A Very Long Title"
+title: "썸네일이 없는 긴 제목의 프로젝트 개발 기록"
 date: 2026-06-16T10:00:00+09:00
 draft: false
-description: "This long description checks that text-only list items also stay on one line and use an ellipsis when the content becomes too wide."
+description: "이미지가 없는 프로젝트 게시글의 카드 배치와 제목 표시를 확인합니다."
 tags:
-  - Projects
-  - Dummy
+  - 프로젝트
+  - 더미
 ---
 
-This is a dummy project post used to verify newest-first sorting.
+프로젝트 게시글이 최신 작성일 순서로 정렬되는지 확인하기 위한 예시 글입니다.

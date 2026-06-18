@@ -1,11 +1,11 @@
 ---
-title: "Idea Dummy Sketch 06"
+title: "아이디어 섹션 구성을 확인하는 기록"
 date: 2026-06-12T11:00:00+09:00
 draft: false
-description: "A sample idea sketch for section testing."
+description: "아이디어 섹션에 속한 게시글만 표시되는지 확인합니다."
 tags:
-  - Ideas
-  - Dummy
+  - 아이디어
+  - 더미
 ---
 
-This is a dummy idea post used as extra sample content.
+아이디어 섹션의 목록 구성을 확인하기 위해 추가한 예시 글입니다.

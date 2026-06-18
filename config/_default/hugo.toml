@@ -6,7 +6,10 @@ theme = 'lowkey'
 title = "Yoon Kyoungmin"
 enableRobotsTXT = true
 summaryLength = 15
-paginate = 5
+paginate = 6
+
+[pagination]
+  pagerSize = 6
 
 
 [markup]

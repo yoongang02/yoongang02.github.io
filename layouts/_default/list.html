@@ -1,5 +1,7 @@
 {{ define "main" }}
 
+{{ partial "list/card-styles" . }}
+
 {{ $pages := where .Site.RegularPages "Section" .Section }}
 {{ $pages = $pages.ByDate.Reverse }}
 {{ $paginator := .Paginate $pages }}
@@ -14,16 +16,12 @@
   </h1>
 </div>
 
-<hr>
-
-<section class="pb-10 flex flex-col gap-10">
+<section class="post-grid pb-10">
   {{ range $paginator.Pages }}
     {{ partial "list/default" . }}
   {{ end }}
 </section>
 
-{{ if gt $paginator.TotalPages 1 }}
-  {{ partial "list/pagination" . }}
-{{ end }}
+{{ partial "list/pagination" . }}
 
 {{ end }}

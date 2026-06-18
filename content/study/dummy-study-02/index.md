@@ -1,11 +1,11 @@
 ---
-title: "Study Dummy Note 02 Without Thumbnail But With A Very Long Title"
+title: "썸네일이 없는 긴 제목의 학습 기록 예시"
 date: 2026-06-16T09:00:00+09:00
 draft: false
-description: "This long description checks that text-only list items also stay on one line and use an ellipsis when the content becomes too wide."
+description: "이미지가 없는 게시글도 카드 크기와 제목 배치가 일정하게 유지되는지 확인합니다."
 tags:
-  - Study
-  - Dummy
+  - 학습
+  - 더미
 ---
 
-This is a dummy study post used to verify newest-first sorting.
+학습 게시글이 최신 작성일 순서로 정렬되는지 확인하기 위한 예시 글입니다.

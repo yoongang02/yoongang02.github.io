@@ -1,13 +1,13 @@
 ---
-title: "Study Dummy Note 05"
+title: "게시글 이동을 확인하는 학습 기록"
 date: 2026-06-13T09:00:00+09:00
 draft: false
-description: "A sample study note for navigation testing."
+description: "목록에서 게시글 상세 화면으로 이동하는 동작을 확인합니다."
 tags:
-  - Study
-  - Dummy
+  - 학습
+  - 더미
 ---
 
-This is a dummy study post used to test navigation into posts.
+학습 목록에서 상세 게시글로 이동하는 링크를 확인하기 위한 예시 글입니다.
 
-![Study dummy image 05](inline-image.jpg)
+![학습 기록 예시 이미지 05](inline-image.jpg)

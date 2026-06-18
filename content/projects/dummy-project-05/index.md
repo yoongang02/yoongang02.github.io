@@ -1,13 +1,13 @@
 ---
-title: "Project Dummy Log 05"
+title: "게시글 이동을 확인하는 프로젝트 기록"
 date: 2026-06-13T10:00:00+09:00
 draft: false
-description: "A sample project log for navigation testing."
+description: "목록에서 프로젝트 상세 화면으로 이동하는 동작을 확인합니다."
 tags:
-  - Projects
-  - Dummy
+  - 프로젝트
+  - 더미
 ---
 
-This is a dummy project post used to test navigation into posts.
+프로젝트 목록에서 상세 게시글로 이동하는 링크를 확인하기 위한 예시 글입니다.
 
-![Project dummy image 05](inline-image.jpg)
+![프로젝트 기록 예시 이미지 05](inline-image.jpg)

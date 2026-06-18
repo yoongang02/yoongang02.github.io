@@ -1,11 +1,11 @@
 ---
-title: "Study Dummy Note 06"
+title: "학습 섹션 구성을 확인하는 기록"
 date: 2026-06-12T09:00:00+09:00
 draft: false
-description: "A sample study note for section testing."
+description: "학습 섹션에 속한 게시글만 표시되는지 확인합니다."
 tags:
-  - Study
-  - Dummy
+  - 학습
+  - 더미
 ---
 
-This is a dummy study post used as extra sample content.
+학습 섹션의 목록 구성을 확인하기 위해 추가한 예시 글입니다.

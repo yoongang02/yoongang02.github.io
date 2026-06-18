@@ -1,13 +1,13 @@
 ---
-title: "Idea Dummy Sketch 01 With An Extremely Long Title To Verify Ellipsis And Continue Far Beyond Two Lines In The Listing Preview"
+title: "목록에서 여러 줄 말줄임을 확인하기 위한 아주 긴 아이디어 제목 예시"
 date: 2026-06-17T11:00:00+09:00
 draft: false
-description: "This is a deliberately long idea description that should be truncated with an ellipsis before it pushes the thumbnail away from the right edge."
+description: "긴 아이디어 제목이 카드 높이와 썸네일 배치에 영향을 주지 않는지 확인합니다."
 tags:
-  - Ideas
-  - Dummy
+  - 아이디어
+  - 더미
 ---
 
-This is a dummy idea post used to verify the Ideas section list.
+아이디어 섹션의 게시글 목록과 긴 제목 표시를 확인하기 위한 예시 글입니다.
 
-![Idea dummy image 01](inline-image.jpg)
+![아이디어 기록 예시 이미지 01](inline-image.jpg)

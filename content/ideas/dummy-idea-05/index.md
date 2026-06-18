@@ -1,13 +1,13 @@
 ---
-title: "Idea Dummy Sketch 05"
+title: "게시글 이동을 확인하는 아이디어 기록"
 date: 2026-06-13T11:00:00+09:00
 draft: false
-description: "A sample idea sketch for navigation testing."
+description: "목록에서 아이디어 상세 화면으로 이동하는 동작을 확인합니다."
 tags:
-  - Ideas
-  - Dummy
+  - 아이디어
+  - 더미
 ---
 
-This is a dummy idea post used to test navigation into posts.
+아이디어 목록에서 상세 게시글로 이동하는 링크를 확인하기 위한 예시 글입니다.
 
-![Idea dummy image 05](inline-image.jpg)
+![아이디어 기록 예시 이미지 05](inline-image.jpg)
