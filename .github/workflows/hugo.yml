@@ -4,6 +4,10 @@ on:
   push:
     branches: ["main"]
   workflow_dispatch:
+  schedule:
+    - cron: "17,47 * * * *"
+  repository_dispatch:
+    types: [notion-publish]
 
 permissions:
   contents: read
@@ -34,11 +38,18 @@ jobs:
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
-          hugo-version: "0.110.0"
+          hugo-version: "0.163.2"
           extended: true
 
+      - name: Sync published posts from Notion
+        env:
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          NOTION_DATA_SOURCE_ID: ${{ secrets.NOTION_DATA_SOURCE_ID }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+        run: npm run sync:notion
+
       - name: Build
-        run: hugo --minify
+        run: npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

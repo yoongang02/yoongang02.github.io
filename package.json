@@ -7,7 +7,9 @@
   "description": "A Clean and Simple Hugo theme inspired by Adam Wathan's (https://adamwathan.me/) Website.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "sync:notion": "node scripts/sync-notion.mjs",
+    "build": "hugo --minify",
+    "test": "hugo --panicOnWarning --renderToMemory"
   },
   "repository": {
     "type": "git",
