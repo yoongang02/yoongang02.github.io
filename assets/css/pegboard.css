@@ -83,84 +83,55 @@
   position: absolute;
   z-index: 30;
   left: 50%;
-  bottom: calc(100% + 20px);
+  bottom: calc(100% + 14px);
   display: flex;
-  width: 250px;
-  min-height: 66px;
-  max-width: min(250px, 76vw);
-  padding: 12px 18px 11px 38px;
-  border: 1px solid rgba(17, 24, 39, 0.18);
-  border-radius: 3px;
+  width: max-content;
+  min-width: 120px;
+  max-width: min(240px, 76vw);
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 14px;
   align-items: center;
   color: #111827;
-  background-color: rgba(252, 252, 250, 0.97);
-  background-image:
-    linear-gradient(105deg, rgba(255, 255, 255, 0.72), rgba(224, 224, 218, 0.18) 52%, rgba(255, 255, 255, 0.58)),
-    repeating-linear-gradient(0deg, rgba(17, 24, 39, 0.018) 0 1px, transparent 1px 3px);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
   box-shadow:
-    0 8px 20px rgba(15, 23, 42, 0.17),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  font-size: 13px;
-  line-height: 1.35;
-  letter-spacing: -0.015em;
-  text-align: center;
+    0 12px 32px rgba(15, 23, 42, 0.16),
+    0 2px 8px rgba(15, 23, 42, 0.08);
+  font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
   white-space: normal;
   pointer-events: none;
   opacity: 0;
   transform:
-    translate(-50%, 5px)
+    translate(-50%, 6px)
     rotate(calc(var(--magnet-rotation) * -1))
-    scale(0.94);
+    scale(0.98);
   transform-origin: bottom center;
   visibility: hidden;
   transition:
-    opacity 150ms ease,
+    opacity var(--ui-transition),
     transform 180ms cubic-bezier(0.2, 0.75, 0.25, 1),
     visibility 0s 180ms;
 }
 
-.pegboard-tooltip::before {
-  position: absolute;
-  top: 50%;
-  left: 14px;
-  width: 11px;
-  height: 11px;
-  border: 2px solid rgba(17, 24, 39, 0.72);
-  border-radius: 50%;
-  background: #4c91dc;
+.dark .pegboard-tooltip {
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #f9fafb;
+  background: rgba(31, 41, 55, 0.78);
   box-shadow:
-    0 1px 2px rgba(15, 23, 42, 0.35),
-    inset 0 1px 1px rgba(255, 255, 255, 0.55);
-  content: "";
-  transform: translateY(-50%);
-}
-
-.pegboard-tooltip::after {
-  position: absolute;
-  top: 50%;
-  left: -10px;
-  width: 27px;
-  height: 3px;
-  border-radius: 2px;
-  background:
-    repeating-linear-gradient(
-      0deg,
-      #f4f4f1 0 1px,
-      #a9aaa7 1px 2px,
-      #ecece8 2px 3px
-    );
-  content: "";
-  filter: drop-shadow(1px 1px 1px rgba(15, 23, 42, 0.35));
-  transform: translateY(-50%) rotate(10deg);
-  transform-origin: right center;
+    0 12px 32px rgba(0, 0, 0, 0.34),
+    0 2px 8px rgba(0, 0, 0, 0.22);
 }
 
 .pegboard-tag-title {
   display: -webkit-box;
-  width: 100%;
   overflow: hidden;
-  font-weight: 700;
-  line-height: 1.35;
+  font-weight: 600;
+  line-height: 1.4;
   text-align: left;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -180,20 +151,9 @@
 }
 
 .pegboard-magnet.tooltip-below .pegboard-tooltip {
-  top: calc(100% + 20px);
+  top: calc(100% + 14px);
   bottom: auto;
   transform-origin: top center;
-}
-
-.pegboard-magnet:not(.tooltip-below) .pegboard-tooltip::before {
-  top: 50%;
-  bottom: auto;
-}
-
-.pegboard-magnet:not(.tooltip-below) .pegboard-tooltip::after {
-  top: 50%;
-  bottom: auto;
-  transform: translateY(-50%) rotate(-10deg);
 }
 
 .pegboard-magnet.tooltip-right .pegboard-tooltip {
@@ -202,7 +162,7 @@
   transform:
     translate(0, 5px)
     rotate(calc(var(--magnet-rotation) * -1))
-    scale(0.94);
+    scale(0.98);
 }
 
 .pegboard-magnet.tooltip-right:hover .pegboard-tooltip,
@@ -220,7 +180,7 @@
   transform:
     translate(0, 5px)
     rotate(calc(var(--magnet-rotation) * -1))
-    scale(0.94);
+    scale(0.98);
 }
 
 .pegboard-magnet.tooltip-left:hover .pegboard-tooltip,
@@ -241,15 +201,20 @@
     margin-bottom: 12px;
   }
 
+  .pegboard-surface {
+    aspect-ratio: 3 / 1;
+  }
+
   .pegboard-magnet {
     width: clamp(26px, calc(var(--magnet-size) * 1%), 45px);
   }
 
   .pegboard-tooltip {
-    width: 210px;
-    min-height: 58px;
+    min-width: 108px;
+    min-height: 40px;
     max-width: min(210px, 76vw);
-    padding: 9px 13px 8px 34px;
+    padding: 9px 12px;
+    border-radius: 12px;
   }
 
   .pegboard-tag-title {

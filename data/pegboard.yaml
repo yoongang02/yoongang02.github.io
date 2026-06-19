@@ -7,19 +7,19 @@ magnet_defaults:
 
 magnets:
   - image: "/img/pegboard/magnets/mario-star.png"
-    post: "/ideas/dummy-idea-01"
+    post: "/reviews"
     alt: "슈퍼마리오 별 마그넷"
     size: 9
     rotation: -7
 
   - image: "/img/pegboard/magnets/kirby.png"
-    post: "/projects/dummy-project-01"
+    post: "/projects"
     alt: "커비 마그넷"
     size: 10
     rotation: 5
 
   - image: "/img/pegboard/magnets/toy-story-alien.png"
-    post: "/study/dummy-study-01"
+    post: "/study"
     alt: "토이스토리 외계인 마그넷"
     size: 8.5
     rotation: -3
