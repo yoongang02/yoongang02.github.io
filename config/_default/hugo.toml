@@ -1,6 +1,6 @@
 baseURL = "https://yoongang02.github.io"
 copyright = "{year} Yoon Kyoungmin"
-languageCode = 'ko-KR'
+locale = 'ko-KR'
 defaultContentLanguage = 'ko'
 theme = 'lowkey'
 title = "Yoon Kyoungmin"
