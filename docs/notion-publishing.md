@@ -12,13 +12,13 @@
 | `Title` | 제목 | 예 | 게시글 제목 |
 | `Published` | 체크박스 | 예 | 체크한 글만 발행 |
 | `Date` | 날짜 | 예 | 게시일 및 정렬 |
+| `Section` | 선택 | 예 | `posts`, `study`, `projects`, `ideas` 중 게시 위치 |
 | `Slug` | 텍스트 | 아니요 | URL 경로. 비우면 제목으로 자동 생성 |
-| `Description` | 텍스트 | 아니요 | 제목 아래 요약문과 메타 설명 |
+| `Description` | 텍스트 | 아니요 | 검색엔진 및 링크 공유용 메타 설명 |
 | `Tags` | 다중 선택 | 아니요 | 게시글 태그 |
-| `Categories` | 다중 선택 | 아니요 | Hugo 카테고리 |
-| `Section` | 선택 | 아니요 | `posts`, `study`, `projects`, `ideas` 등 저장 섹션 |
 
 속성 이름을 다르게 쓰고 싶다면 `.env.example`에 적힌 환경 변수로 매핑할 수 있습니다.
+이 블로그는 큰 분류에 `Section`, 세부 주제에 `Tags`를 사용하므로 `Categories` 속성은 필요하지 않습니다.
 
 ## 2. Notion 연결 만들기
 
