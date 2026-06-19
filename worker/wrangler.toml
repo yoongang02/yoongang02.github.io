@@ -1,0 +1,16 @@
+name = "yoongang-blog-community"
+main = "src/index.js"
+compatibility_date = "2026-06-19"
+workers_dev = true
+preview_urls = false
+
+[vars]
+ENVIRONMENT = "production"
+ALLOWED_ORIGINS = "http://localhost:1313,http://127.0.0.1:1313,http://localhost:1414,http://127.0.0.1:1414,https://yoongang02.github.io"
+GITHUB_REPOSITORY = "yoongang02/yoongang02.github.io"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "yoongang-blog-community"
+database_id = "88ff05b8-205e-4bf8-997c-64c0017783a1"
+migrations_dir = "migrations"

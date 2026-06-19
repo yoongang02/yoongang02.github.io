@@ -2,3 +2,6 @@
 .env.build
 node_modules
 public
+worker/.dev.vars
+worker/.deployment-secrets
+.wrangler
