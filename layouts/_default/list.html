@@ -1,7 +1,5 @@
 {{ define "main" }}
 
-{{ partial "list/card-styles" . }}
-
 {{ $pages := where .Site.RegularPages "Section" .Section }}
 {{ $pages = $pages.ByDate.Reverse }}
 {{ $paginator := .Paginate $pages }}

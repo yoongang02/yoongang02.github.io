@@ -24,16 +24,16 @@
         loading="lazy"
       />
     {{ else }}
-      <span class="post-card-placeholder flex h-full items-center justify-center text-sm font-semibold uppercase text-gray-400 dark:text-gray-500">
+      <span class="post-card-placeholder">
         {{ .Section }}
       </span>
     {{ end }}
   </a>
 
   <div class="post-card-title-part">
-    <h1 class="post-card-title">
+    <h2 class="post-card-title">
       <a href="{{ .Permalink }}">{{ .Title }}</a>
-    </h1>
+    </h2>
   </div>
 
   <div class="post-card-footer">

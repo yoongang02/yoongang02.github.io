@@ -1,47 +1,7 @@
-<button class="toggle-theme" aria-label="Toggle Theme" title="Toggle Theme" onclick="toggleTheme()">
+<button class="toggle-theme" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환" data-theme-toggle>
   <span class="theme-icon light"> {{ partial "utils/icon" "sun" }} </span>
   <span class="theme-icon dark"> {{ partial "utils/icon" "moon" }} </span>
 </button>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const theme = localStorage.getItem('theme');
-
-    if (!theme || theme === 'light') {
-      setTheme('light');
-    } else {
-      setTheme(theme);
-    }
-  });
-
-  function setTheme(theme) {
-    const html = document.querySelector('html');
-    localStorage.setItem('theme', theme);
-
-    if (theme === 'light') {
-      if (html.classList.contains('dark')) {
-        document.querySelector('html').classList.remove('dark');
-      }
-
-      document.querySelector('.theme-icon.light').style.display = 'none';
-      document.querySelector('.theme-icon.dark').style.display = 'block';
-    } else {
-      if (!html.classList.contains('dark')) {
-        document.querySelector('html').classList.add('dark');
-      }
-
-      document.querySelector('.theme-icon.dark').style.display = 'none';
-      document.querySelector('.theme-icon.light').style.display = 'block';
-    }
-  }
-
-  function toggleTheme() {
-    const theme = localStorage.getItem('theme');
-
-    if (theme === 'light') {
-      setTheme('dark');
-    } else {
-      setTheme('light');
-    }
-  }
-</script>
+{{- $themeScript := resources.Get "js/theme.js" | minify | fingerprint -}}
+<script defer src="{{ $themeScript.RelPermalink }}" integrity="{{ $themeScript.Data.Integrity }}"></script>

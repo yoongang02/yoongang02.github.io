@@ -1,0 +1,76 @@
+.admin-comments {
+  width: min(100%, 560px);
+  margin: 4rem auto 8rem;
+  text-align: left;
+}
+
+.admin-comments header > p {
+  margin: 0.5rem 0 0;
+}
+
+.admin-comments h1 {
+  margin: 0.35rem 0 0;
+  font-size: 2rem;
+}
+
+.admin-comments .admin-eyebrow {
+  color: var(--ui-accent);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.admin-owner-form {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border-radius: var(--ui-control-radius);
+  background: var(--ui-surface);
+}
+
+.admin-owner-form label {
+  display: grid;
+  gap: 0.5rem;
+  color: var(--ui-text-primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.admin-owner-form input {
+  min-height: var(--ui-control-height);
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--ui-surface-strong);
+  border-radius: calc(var(--ui-control-radius) - 2px);
+  color: var(--ui-text-primary);
+  background: var(--ui-bg);
+}
+
+.admin-owner-form > div,
+.admin-owner-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.admin-owner-form p,
+.admin-owner-actions p {
+  margin: 0;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.admin-owner-actions {
+  margin-top: 2rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--ui-surface-strong);
+  border-bottom: 1px solid var(--ui-surface-strong);
+}
+
+.admin-owner-actions a,
+.admin-owner-actions button {
+  color: var(--ui-accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+}

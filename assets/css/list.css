@@ -1,5 +1,4 @@
-<style>
-  .post-grid {
+.post-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -152,7 +151,7 @@
     color: var(--ui-action);
     background: var(--ui-surface-strong);
     text-decoration: none;
-    transition: color 160ms ease, background-color 160ms ease;
+    transition: color var(--ui-transition), background-color var(--ui-transition);
   }
 
   #content a.post-card-arrow:hover {
@@ -194,4 +193,90 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
-</style>
+
+.post-pagination {
+  display: flex;
+  padding-bottom: 40px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#content .post-pagination-button {
+  display: flex;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ui-action);
+  border-radius: var(--ui-control-radius);
+  text-decoration: none;
+}
+
+.post-pagination-button span {
+  display: block;
+  width: 22px;
+  height: 22px;
+}
+
+.post-pagination-button:first-child span {
+  transform: translateX(-1px);
+}
+
+.post-pagination-button:last-child span {
+  transform: translateX(1px);
+}
+
+#content .post-pagination-button.is-active {
+  color: var(--ui-action-text);
+  background: var(--ui-action);
+}
+
+#content .post-pagination-button.is-active:hover {
+  color: var(--ui-action-text);
+  background: var(--ui-action-hover);
+}
+
+#content .post-pagination-button.is-disabled {
+  color: var(--ui-action);
+  background: var(--ui-bg);
+  cursor: default;
+}
+
+.term-index {
+  display: grid;
+  margin: 0 0 40px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  list-style: none;
+}
+
+.term-index li {
+  margin-right: -1px;
+  margin-bottom: -1px;
+  border: 1px solid var(--ui-border);
+}
+
+#content .term-index a {
+  display: flex;
+  min-height: 56px;
+  padding: 14px 16px;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--ui-text-primary);
+  text-decoration: none;
+}
+
+#content .term-index a:hover {
+  color: var(--ui-accent);
+  background: var(--ui-surface);
+}
+
+.term-index a span:last-child {
+  color: var(--ui-text-secondary);
+  font-size: 14px;
+}
+
+@media (max-width: 639px) {
+  .term-index {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

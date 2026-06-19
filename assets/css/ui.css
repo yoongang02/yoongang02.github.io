@@ -1,5 +1,4 @@
-<style>
-  :root {
+:root {
     --ui-frame-width: 960px;
     --ui-content-width: 768px;
     --ui-image-radius: 0px;
@@ -8,7 +7,7 @@
     --ui-bg: #ffffff;
     --ui-text-primary: #111827;
     --ui-text-secondary: #4b5563;
-    --ui-border: #9ca3af;
+    --ui-border: #d1d5db;
     --ui-surface: #f3f4f6;
     --ui-surface-strong: #e5e7eb;
     --ui-action: #1f2937;
@@ -20,6 +19,11 @@
     --ui-tag-hover: #0ca678;
     --ui-tag-bg: #e6fcf5;
     --ui-focus: #22c55e;
+    --ui-code: #e64980;
+    --ui-control-height: 40px;
+    --ui-transition: 150ms ease;
+    --ui-danger: #e03131;
+    --ui-danger-text: #ffffff;
   }
 
   .dark {
@@ -38,11 +42,19 @@
     --ui-tag-hover: #96f2d7;
     --ui-tag-bg: #153c34;
     --ui-focus: #4ade80;
+    --ui-code: #faa2c1;
+    --ui-danger: #ff8787;
+    --ui-danger-text: #111827;
   }
 
   body {
+    max-width: var(--ui-frame-width);
     color: var(--ui-text-secondary);
     background: var(--ui-bg);
+  }
+
+  body.post-page {
+    max-width: 1180px;
   }
 
   body h1,
@@ -54,18 +66,6 @@
   body #site-title,
   body .title-large,
   body .title-small {
-    color: var(--ui-text-primary);
-  }
-
-  .dark body h1,
-  .dark body h2,
-  .dark body h3,
-  .dark body h4,
-  .dark body h5,
-  .dark body h6,
-  .dark body #site-title,
-  .dark body .title-large,
-  .dark body .title-small {
     color: var(--ui-text-primary);
   }
 
@@ -109,7 +109,7 @@
     font-weight: 700;
     line-height: 1.5;
     text-decoration: none;
-    transition: color 150ms ease, background-color 150ms ease;
+    transition: color var(--ui-transition), background-color var(--ui-transition);
   }
 
   #content a.tag-chip:hover {
@@ -132,6 +132,10 @@
     height: 24px;
   }
 
+  [hidden] {
+    display: none !important;
+  }
+
   a:focus-visible,
   button:focus-visible,
   [tabindex]:focus-visible {
@@ -142,6 +146,26 @@
   .post-card-arrow:focus-visible,
   .post-pagination-button:focus-visible {
     outline-offset: 2px;
+  }
+
+  body > footer {
+    color: var(--ui-text-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  body > footer a {
+    color: inherit;
+  }
+
+  @media (min-width: 640px) {
+    body:not(.post-page) > .header > header {
+      padding-block: 3rem;
+    }
+
+    .home-page > .header > header {
+      padding-block: 2.5rem;
+    }
   }
 
   @media (max-width: 639px) {
@@ -156,8 +180,7 @@
 
     body:not(.post-page) > .header .toggle-theme {
       position: absolute;
-      top: 4rem;
+      top: 1rem;
       right: 0;
     }
   }
-</style>
