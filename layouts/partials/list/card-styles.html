@@ -19,6 +19,7 @@
     aspect-ratio: 16 / 9;
     margin: 24px 24px 0;
     overflow: hidden;
+    border-radius: var(--ui-image-radius);
     color: var(--ui-text-secondary) !important;
     background: var(--ui-surface);
     text-decoration: none !important;
@@ -76,26 +77,16 @@
   }
 
   .post-card-tags {
-    display: flex;
     max-height: 36px;
     padding: 0 24px 6px;
     overflow: hidden;
-    flex-wrap: wrap;
-    gap: 4px 10px;
+    gap: 6px;
     align-content: flex-start;
   }
 
-  #content .post-card-tags a {
-    color: var(--ui-tag);
-    font-size: 13px;
-    font-weight: 600;
-    line-height: 18px;
-    text-decoration: none;
-  }
-
-  #content .post-card-tags a:hover {
-    color: var(--ui-tag-hover);
-    text-decoration: underline;
+  #content .post-card-tags a.tag-chip {
+    padding: 0.25rem 0.65rem;
+    font-size: 0.78rem;
   }
 
   .post-card-meta-part {

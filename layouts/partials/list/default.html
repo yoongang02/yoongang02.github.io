@@ -35,13 +35,7 @@
   </div>
 
   <div class="post-card-footer">
-    {{ with .GetTerms "tags" }}
-      <div class="post-card-tags" aria-label="게시글 태그">
-        {{ range . }}
-          <a href="{{ .RelPermalink }}">#{{ .LinkTitle }}</a>
-        {{ end }}
-      </div>
-    {{ end }}
+    {{ partial "tags/chips" (dict "page" . "class" "post-card-tags" "label" "게시글 태그") }}
 
     <div class="post-card-meta-part">
       <div class="post-card-meta">
