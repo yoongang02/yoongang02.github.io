@@ -1,6 +1,7 @@
 # Notion 글 자동 발행 설정
 
 이 프로젝트는 Notion 데이터베이스의 공개 대상 글을 Hugo Markdown으로 변환한 뒤 GitHub Pages에 배포합니다.
+동기화 요청은 Notion API `2026-03-11` 버전을 사용합니다.
 
 ## 1. Notion 데이터베이스 속성
 
@@ -39,7 +40,7 @@ hugo server -D
 
 동기화된 글은 기본적으로 `content/posts/<slug>/index.md`에 생성되고, Notion 이미지는 같은 글의 `notion-assets` 폴더에 내려받습니다.
 
-## 4. GitHub Actions 자동 발행
+## 4. Notion 자동화를 통한 즉시 발행
 
 GitHub 저장소의 **Settings → Secrets and variables → Actions**에 다음 Repository secret을 추가합니다.
 
@@ -50,10 +51,10 @@ GitHub 저장소의 **Settings → Secrets and variables → Actions**에 다음
 
 - `main` 브랜치에 push
 - Actions 화면에서 수동 실행
-- 30분마다 예약 실행
 - `notion-publish` repository dispatch 이벤트 수신
 
-예약 실행은 GitHub 상황에 따라 몇 분 늦을 수 있습니다. 거의 즉시 발행하려면 Notion 자동화나 별도 웹훅 서비스에서 GitHub의 `repository_dispatch` API를 호출하면 됩니다.
+Notion 데이터베이스 자동화와 Cloudflare Worker를 이용한 즉시 발행 설정은
+[Notion 자동화 발행 가이드](notion-automation-publishing.html)를 참고하세요.
 
 ## 지원하는 Notion 본문
 

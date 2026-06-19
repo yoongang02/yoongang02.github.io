@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notion 자동화를 이용한 Hugo 게시글 발행 가이드</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #ffffff;
+      --surface: #f3f4f6;
+      --text: #111827;
+      --muted: #4b5563;
+      --border: #d1d5db;
+      --accent: #12b886;
+      --code: #111827;
+      --code-text: #e5e7eb;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #111827;
+        --surface: #1f2937;
+        --text: #f3f4f6;
+        --muted: #9ca3af;
+        --border: #374151;
+        --accent: #63e6be;
+        --code: #0b1020;
+        --code-text: #e5e7eb;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+      font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.75;
+    }
+    main {
+      width: min(100% - 32px, 860px);
+      margin: 0 auto;
+      padding: 64px 0 96px;
+    }
+    h1 { margin: 0 0 16px; font-size: clamp(2rem, 5vw, 3rem); line-height: 1.2; }
+    h2 { margin: 56px 0 16px; font-size: 1.6rem; }
+    h3 { margin: 32px 0 12px; font-size: 1.15rem; }
+    p, li { color: var(--muted); }
+    a { color: var(--accent); }
+    .lead { max-width: 720px; font-size: 1.08rem; }
+    .notice {
+      margin: 28px 0;
+      padding: 18px 20px;
+      border-left: 4px solid var(--accent);
+      background: var(--surface);
+    }
+    .flow {
+      display: grid;
+      margin: 24px 0;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .flow div {
+      padding: 16px 12px;
+      border: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+    pre {
+      overflow-x: auto;
+      padding: 20px;
+      border-radius: 10px;
+      color: var(--code-text);
+      background: var(--code);
+      font-size: 0.86rem;
+      line-height: 1.6;
+    }
+    code { font-family: "SFMono-Regular", Consolas, monospace; }
+    :not(pre) > code {
+      padding: 2px 6px;
+      border-radius: 5px;
+      background: var(--surface);
+      font-size: 0.9em;
+    }
+    @media (max-width: 700px) {
+      main { padding-top: 40px; }
+      .flow { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Notion 자동화를 이용한 게시글 발행</h1>
+  <p class="lead">
+    Notion 데이터베이스에서 <strong>Published</strong> 속성을 켜면 즉시 GitHub Actions를 실행하고,
+    기존 동기화 스크립트가 본문과 이미지를 Hugo 콘텐츠로 변환해 GitHub Pages에 배포하는 구성입니다.
+  </p>
+
+  <div class="notice">
+    <strong>결론:</strong> 구현 가능합니다. 예약 실행은 필요하지 않습니다. 다만 GitHub 토큰 보호와
+    요청 형식 변환을 위해 작은 중계 API를 두는 방식이 가장 안전합니다.
+  </div>
+
+  <h2>권장 구조</h2>
+  <div class="flow" aria-label="발행 흐름">
+    <div>Notion 자동화</div>
+    <div>Cloudflare Worker</div>
+    <div>GitHub Actions</div>
+    <div>GitHub Pages</div>
+  </div>
+
+  <p>
+    Notion의 webhook action은 POST 요청과 custom header를 지원하지만, 전송 본문은 선택한 데이터베이스
+    속성을 기반으로 만들어집니다. GitHub repository dispatch는 별도의 <code>event_type</code> JSON 형식을
+    요구하므로 Worker가 요청을 검증하고 형식을 변환합니다.
+  </p>
+
+  <h2>현재 프로젝트에서 유지되는 부분</h2>
+  <ul>
+    <li><code>scripts/sync-notion.mjs</code>: 게시글 UI와 독립적으로 동작하며 최신 Notion API <code>2026-03-11</code>을 사용합니다.</li>
+    <li><code>NOTION_API_KEY</code>, <code>NOTION_DATA_SOURCE_ID</code>: GitHub Actions secret에 유지합니다.</li>
+    <li><code>repository_dispatch: notion-publish</code>: Notion 자동화가 시작할 배포 이벤트입니다.</li>
+    <li>게시글 UI 변경은 Hugo 렌더링 단계에 적용되므로 Notion 변환 로직에 추가 수정이 필요하지 않습니다.</li>
+  </ul>
+
+  <h2>1. GitHub 토큰 준비</h2>
+  <ol>
+    <li>GitHub에서 fine-grained personal access token을 만듭니다.</li>
+    <li>대상 저장소를 <code>yoongang02/yoongang02.github.io</code>로 제한합니다.</li>
+    <li>Repository permission의 <strong>Contents: Read and write</strong>만 허용합니다.</li>
+    <li>토큰은 Notion이 아니라 Cloudflare Worker secret에 저장합니다.</li>
+  </ol>
+
+  <h2>2. Cloudflare Worker 생성</h2>
+  <p>다음 Worker는 Notion의 비밀 헤더를 검사한 뒤 GitHub에 <code>notion-publish</code> 이벤트를 보냅니다.</p>
+
+  <pre><code>export default {
+  async fetch(request, env) {
+    if (request.method !== "POST") {
+      return new Response("Method Not Allowed", { status: 405 });
+    }
+
+    const secret = request.headers.get("X-Webhook-Secret");
+    if (!secret || secret !== env.WEBHOOK_SECRET) {
+      return new Response("Unauthorized", { status: 401 });
+    }
+
+    const notionPayload = await request.json().catch(() =&gt; ({}));
+    const response = await fetch(
+      "https://api.github.com/repos/yoongang02/yoongang02.github.io/dispatches",
+      {
+        method: "POST",
+        headers: {
+          "Accept": "application/vnd.github+json",
+          "Authorization": `Bearer ${env.GITHUB_TOKEN}`,
+          "X-GitHub-Api-Version": "2026-03-10",
+          "User-Agent": "notion-blog-publisher"
+        },
+        body: JSON.stringify({
+          event_type: "notion-publish",
+          client_payload: {
+            source: "notion-automation",
+            received_at: new Date().toISOString(),
+            notion: notionPayload
+          }
+        })
+      }
+    );
+
+    if (!response.ok) {
+      return new Response("GitHub dispatch failed", { status: 502 });
+    }
+
+    return new Response("Accepted", { status: 202 });
+  }
+};</code></pre>
+
+  <p>Worker 설정의 secret에는 다음 값을 등록합니다.</p>
+  <table>
+    <thead><tr><th>이름</th><th>값</th></tr></thead>
+    <tbody>
+      <tr><td><code>GITHUB_TOKEN</code></td><td>앞에서 만든 fine-grained GitHub token</td></tr>
+      <tr><td><code>WEBHOOK_SECRET</code></td><td>충분히 긴 임의 문자열</td></tr>
+    </tbody>
+  </table>
+
+  <h2>3. Notion 데이터베이스 자동화 설정</h2>
+  <ol>
+    <li>게시글 데이터베이스 상단의 <strong>⚡ Automations</strong>를 엽니다.</li>
+    <li>Trigger를 <strong>Published 속성이 checked로 변경될 때</strong>로 지정합니다.</li>
+    <li>Action에서 <strong>Send webhook</strong>을 선택합니다.</li>
+    <li>URL에 배포된 Worker 주소를 입력합니다.</li>
+    <li>Custom header에 <code>X-Webhook-Secret</code>과 Worker의 <code>WEBHOOK_SECRET</code> 값을 입력합니다.</li>
+    <li>전송 속성에는 Title, Slug, Published 정도만 선택합니다. 실제 본문은 GitHub Actions가 Notion API로 다시 읽습니다.</li>
+  </ol>
+
+  <div class="notice">
+    Notion webhook action은 유료 플랜에서 사용할 수 있습니다. 무료 플랜이라면 Notion integration webhook이나
+    Make/Zapier 같은 중계 서비스가 대안입니다.
+  </div>
+
+  <h2>4. 발행 동작</h2>
+  <ol>
+    <li>Notion에서 글을 작성합니다.</li>
+    <li><code>Published</code>를 체크합니다.</li>
+    <li>Notion 자동화가 Worker를 호출합니다.</li>
+    <li>Worker가 GitHub의 <code>repository_dispatch</code> 이벤트를 생성합니다.</li>
+    <li>GitHub Actions가 공개된 전체 Notion 글을 다시 동기화하고 Hugo를 빌드합니다.</li>
+  </ol>
+
+  <h2>주의사항</h2>
+  <ul>
+    <li>Notion 본문은 webhook payload에 포함되지 않습니다. 현재 스크립트가 API로 본문을 다시 조회하는 것이 정상 동작입니다.</li>
+    <li>GitHub token을 Notion custom header에 직접 넣지 않는 편이 안전합니다.</li>
+    <li>Published를 연속으로 여러 번 바꾸면 빌드가 반복될 수 있습니다. GitHub Actions의 concurrency 설정이 이전 실행을 정리하도록 구성할 수 있습니다.</li>
+    <li>발행 취소도 즉시 반영하려면 Published가 unchecked로 변경될 때 동일한 webhook을 호출하는 두 번째 자동화를 추가합니다.</li>
+  </ul>
+
+  <h2>공식 참고 자료</h2>
+  <ul>
+    <li><a href="https://www.notion.com/help/webhook-actions">Notion Webhook actions</a></li>
+    <li><a href="https://www.notion.com/help/database-automations">Notion Database automations</a></li>
+    <li><a href="https://docs.github.com/en/rest/repos/repos#create-a-repository-dispatch-event">GitHub repository dispatch API</a></li>
+  </ul>
+</main>
+</body>
+</html>
