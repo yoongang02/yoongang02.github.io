@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="{{ .Site.LanguageCode | default `en` }}" class="scroll-smooth dark">
+<html lang="{{ .Site.Language.Locale | default `en` }}" class="scroll-smooth dark">
   <head>
     {{- partial "head/index" . -}}
     {{- partial "head/ui-system" . -}}
   </head>
 
-  <body class="mx-auto px-2.5{{ if .IsHome }} home-page{{ end }}" style="max-width:960px;">
+  <body class="mx-auto px-2.5{{ if .IsHome }} home-page{{ end }}{{ if .IsPage }} post-page{{ end }}" style="max-width:{{ if .IsPage }}1180{{ else }}960{{ end }}px;">
     <div class="header">
       {{ partial "header/index" . }}
       {{ partial "header/theme-button" . }}

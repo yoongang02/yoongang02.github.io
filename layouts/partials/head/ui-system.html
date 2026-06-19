@@ -1,5 +1,10 @@
 <style>
   :root {
+    --ui-frame-width: 960px;
+    --ui-content-width: 768px;
+    --ui-image-radius: 0px;
+    --ui-control-radius: 10px;
+    --ui-pill-radius: 999px;
     --ui-bg: #ffffff;
     --ui-text-primary: #111827;
     --ui-text-secondary: #4b5563;
@@ -11,8 +16,9 @@
     --ui-action-text: #ffffff;
     --ui-accent: #15803d;
     --ui-accent-hover: #166534;
-    --ui-tag: #0C8DF5;
-    --ui-tag-hover: #1e40af;
+    --ui-tag: #12b886;
+    --ui-tag-hover: #0ca678;
+    --ui-tag-bg: #e6fcf5;
     --ui-focus: #22c55e;
   }
 
@@ -28,8 +34,9 @@
     --ui-action-text: #111827;
     --ui-accent: #4ade80;
     --ui-accent-hover: #86efac;
-    --ui-tag: #60a5fa;
-    --ui-tag-hover: #93c5fd;
+    --ui-tag: #63e6be;
+    --ui-tag-hover: #96f2d7;
+    --ui-tag-bg: #153c34;
     --ui-focus: #4ade80;
   }
 
@@ -73,12 +80,41 @@
     color: var(--ui-text-primary);
   }
 
+  footer .footer-social-list {
+    margin-bottom: 0;
+  }
+
   #content a {
     color: var(--ui-accent);
   }
 
   #content a:hover {
     color: var(--ui-accent-hover);
+  }
+
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  #content a.tag-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--ui-pill-radius);
+    color: var(--ui-tag);
+    background: var(--ui-tag-bg);
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.5;
+    text-decoration: none;
+    transition: color 150ms ease, background-color 150ms ease;
+  }
+
+  #content a.tag-chip:hover {
+    color: var(--ui-tag-hover);
+    background: var(--ui-surface-strong);
   }
 
   .header .toggle-theme {
@@ -106,5 +142,22 @@
   .post-card-arrow:focus-visible,
   .post-pagination-button:focus-visible {
     outline-offset: 2px;
+  }
+
+  @media (max-width: 639px) {
+    body:not(.post-page) > .header {
+      position: relative;
+      display: block;
+    }
+
+    body:not(.post-page) > .header > header {
+      width: 100%;
+    }
+
+    body:not(.post-page) > .header .toggle-theme {
+      position: absolute;
+      top: 4rem;
+      right: 0;
+    }
   }
 </style>

@@ -1,0 +1,10 @@
+{{- $page := .page -}}
+{{- $class := .class | default "" -}}
+{{- $label := .label | default "태그" -}}
+{{- with ($page.GetTerms "tags") -}}
+  <div class="tag-list {{ $class }}" aria-label="{{ $label }}">
+    {{- range . -}}
+      <a class="tag-chip" href="{{ .RelPermalink }}">#{{ .LinkTitle }}</a>
+    {{- end -}}
+  </div>
+{{- end -}}

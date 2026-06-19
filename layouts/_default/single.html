@@ -1,0 +1,91 @@
+{{ define "main" }}
+{{ $author := .Site.Title }}
+{{ $avatar := resources.GetMatch .Site.Params.avatar }}
+{{ $formattedDate := .PublishDate.Format "2006년 1월 2일" }}
+
+<article class="post-shell">
+  <header class="post-hero">
+    <h1 class="post-title">{{ .Title }}</h1>
+
+    <div class="post-meta-row">
+      <div class="post-meta">
+        <time datetime="{{ .PublishDate.Format "2006-01-02T15:04:05Z07:00" }}">{{ $formattedDate }}</time>
+      </div>
+
+      <button class="post-share-button" type="button" data-copy-url aria-label="게시글 링크 복사">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M10 13a5 5 0 0 0 7.07.07l2-2a5 5 0 0 0-7.07-7.07l-1.15 1.15M14 11a5 5 0 0 0-7.07-.07l-2 2A5 5 0 0 0 12 20l1.15-1.15"/>
+        </svg>
+        <span data-copy-label>공유</span>
+      </button>
+    </div>
+
+    {{ partial "tags/chips" (dict "page" . "class" "post-tags" "label" "게시글 태그") }}
+
+    {{ with .Params.cover }}
+      {{ $coverResource := $.Resources.GetMatch . }}
+      <figure class="post-cover">
+        <img src="{{ if $coverResource }}{{ $coverResource.RelPermalink }}{{ else }}{{ . | relURL }}{{ end }}" alt="{{ $.Title }}" fetchpriority="high">
+      </figure>
+    {{ end }}
+  </header>
+
+  <div class="post-layout">
+    <div class="post-main-column">
+      {{ if findRE "<(h[1-3])" .Content }}
+        <details class="post-toc-mobile" data-post-toc>
+          <summary>목차</summary>
+          <div class="post-toc-mobile-content">
+            {{ .TableOfContents }}
+          </div>
+        </details>
+      {{ end }}
+
+      <section class="post-content">
+        {{ .Content | emojify }}
+      </section>
+
+      <footer class="post-footer">
+        <section class="post-author-card" aria-label="작성자">
+          {{ with $avatar }}
+            {{ $authorImage := .Fill "128x128 q90" }}
+            <img src="{{ $authorImage.RelPermalink }}" width="64" height="64" alt="{{ $author }}">
+          {{ end }}
+          <div>
+            <strong>{{ $author }}</strong>
+            {{ with $.Site.Params.description }}<p>{{ . }}</p>{{ end }}
+          </div>
+        </section>
+
+        <nav class="post-neighbors" aria-label="이전 및 다음 게시글">
+          {{ with .PrevInSection }}
+            <a class="post-neighbor post-neighbor-prev" href="{{ .RelPermalink }}">
+              <span>← 이전 글</span>
+              <strong>{{ .Title }}</strong>
+            </a>
+          {{ end }}
+          {{ with .NextInSection }}
+            <a class="post-neighbor post-neighbor-next" href="{{ .RelPermalink }}">
+              <span>다음 글 →</span>
+              <strong>{{ .Title }}</strong>
+            </a>
+          {{ end }}
+        </nav>
+
+        {{ partial "single/comments/index" . }}
+      </footer>
+    </div>
+
+    {{ if findRE "<(h[1-3])" .Content }}
+      <aside class="post-toc" aria-label="목차" data-post-toc>
+        <div class="post-toc-inner">
+          {{ .TableOfContents }}
+        </div>
+      </aside>
+    {{ end }}
+  </div>
+</article>
+
+{{ $postScript := resources.Get "js/post.js" | minify | fingerprint }}
+<script defer src="{{ $postScript.RelPermalink }}" integrity="{{ $postScript.Data.Integrity }}"></script>
+{{ end }}
