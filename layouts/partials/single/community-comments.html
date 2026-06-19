@@ -1,52 +1,24 @@
 <section class="community-comments" data-community-comments aria-labelledby="community-comments-title">
   <header class="community-comments-header">
-    <h2 id="community-comments-title">댓글</h2>
-    <span data-comment-count>0</span>
+    <h2 id="community-comments-title"><span data-comment-count>0</span>개의 댓글</h2>
+    <p>작성한 댓글은 수정하거나 삭제할 수 없습니다.</p>
   </header>
 
   <form class="community-comment-form" data-comment-form>
-    <div class="community-reply-context" data-comment-reply-context hidden>
-      <span><strong data-comment-reply-name></strong>님에게 답글 작성 중</span>
-      <button type="button" data-comment-reply-cancel>취소</button>
-    </div>
-    <label class="community-comment-body-field">
-      <span class="sr-only">댓글 내용</span>
-      <textarea name="body" rows="3" maxlength="1500" placeholder="댓글을 남겨보세요." required></textarea>
-    </label>
-    <div class="community-comment-form-bottom">
-      <div class="community-comment-fields">
-        <label>
-          <span class="sr-only">닉네임</span>
-          <input name="nickname" type="text" minlength="2" maxlength="24" autocomplete="nickname" placeholder="닉네임" required>
-        </label>
-        <label>
-          <span class="sr-only">비밀번호</span>
-          <input name="password" type="password" minlength="4" maxlength="72" autocomplete="new-password" placeholder="비밀번호" required>
-        </label>
-      </div>
-      <div class="community-comment-form-actions">
-        <button class="community-button community-button-secondary" type="button" data-comment-edit-cancel hidden>수정 취소</button>
-        <button class="community-button" type="submit" data-comment-submit>댓글 남기기</button>
-      </div>
-    </div>
+    <input aria-label="닉네임" name="nickname" type="text" minlength="2" maxlength="8" autocomplete="nickname" placeholder="닉네임" required>
+    <textarea aria-label="댓글 내용" name="body" rows="3" maxlength="1500" placeholder="댓글을 입력하세요." required></textarea>
     <div class="community-comment-form-footer">
       <p data-comment-form-status aria-live="polite"></p>
-      <p>비밀번호는 수정·삭제할 때 사용됩니다.</p>
+      <button class="community-button" type="submit" data-comment-submit>작성</button>
     </div>
   </form>
 
-  <div class="community-comment-list" data-comment-list>
-    <p class="community-empty" data-comment-empty>아직 댓글이 없습니다. 첫 댓글을 남겨보세요.</p>
-  </div>
+  <div class="community-comment-list" data-comment-list></div>
 
   <dialog class="community-dialog" data-comment-delete-dialog>
     <form method="dialog" data-comment-delete-form>
       <h3>댓글 삭제</h3>
-      <p>댓글 작성 시 입력한 비밀번호를 입력해 주세요.</p>
-      <label>
-        <span>비밀번호</span>
-        <input name="password" type="password" minlength="4" maxlength="72" required>
-      </label>
+      <p>이 댓글을 삭제할까요? 답글이 있다면 삭제된 댓글로 표시됩니다.</p>
       <p class="community-dialog-status" data-comment-delete-status aria-live="polite"></p>
       <div class="community-dialog-actions">
         <button class="community-button community-button-secondary" value="cancel">취소</button>

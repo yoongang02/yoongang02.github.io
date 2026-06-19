@@ -1,5 +1,6 @@
 ENVIRONMENT=development
 TURNSTILE_SECRET=
 VISITOR_HASH_SECRET=local-development-visitor-secret
+OWNER_AUTH_SECRET=local-development-owner-secret
 NOTION_WEBHOOK_SECRET=local-development-webhook-secret
 GITHUB_TOKEN=

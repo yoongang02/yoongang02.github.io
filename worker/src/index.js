@@ -1,6 +1,6 @@
 const JSON_HEADERS = { 'Content-Type': 'application/json; charset=utf-8' };
 const MAX_BATCH_POSTS = 50;
-const PASSWORD_ITERATIONS = 150_000;
+const OWNER_SESSION_SECONDS = 60 * 60 * 12;
 
 export default {
   async fetch(request, env) {
@@ -23,6 +23,10 @@ export default {
 
       if (url.pathname === '/api/reactions/counts' && request.method === 'POST') {
         return withCors(await getReactionCounts(request, env), request, env);
+      }
+
+      if (url.pathname === '/api/owner/session' && request.method === 'POST') {
+        return withCors(await createOwnerSession(request, env), request, env);
       }
 
       const reactionMatch = url.pathname.match(/^\/api\/posts\/([^/]+)\/reactions$/);
@@ -48,9 +52,9 @@ export default {
       }
 
       const commentMatch = url.pathname.match(/^\/api\/comments\/([^/]+)$/);
-      if (commentMatch && ['PATCH', 'DELETE'].includes(request.method)) {
+      if (commentMatch && request.method === 'DELETE') {
         return withCors(
-          await updateComment(decodeURIComponent(commentMatch[1]), request, env),
+          await deleteCommentAsOwner(decodeURIComponent(commentMatch[1]), request, env),
           request,
           env,
         );
@@ -173,7 +177,7 @@ async function toggleReaction(postId, request, env) {
 async function listComments(postId, env) {
   validatePostId(postId);
   const result = await env.DB.prepare(
-    `SELECT id, parent_id, nickname, body, status, created_at, updated_at
+    `SELECT id, parent_id, nickname, body, status, is_owner, created_at, updated_at
      FROM comments
      WHERE post_id = ? AND status IN ('visible', 'deleted')
      ORDER BY created_at ASC
@@ -182,6 +186,7 @@ async function listComments(postId, env) {
 
   const comments = (result.results || []).map((comment) => ({
     ...comment,
+    is_owner: Boolean(comment.is_owner),
     nickname: comment.status === 'deleted' ? '' : comment.nickname,
     body: comment.status === 'deleted' ? '삭제된 댓글입니다.' : comment.body,
     created_at: toIsoTimestamp(comment.created_at),
@@ -193,9 +198,9 @@ async function listComments(postId, env) {
 async function createComment(postId, request, env) {
   validatePostId(postId);
   const body = await readJson(request);
-  const nickname = cleanText(body.nickname, 2, 24, '닉네임');
+  const isOwner = await hasValidOwnerSession(request, env);
+  const nickname = isOwner ? '주인장' : cleanVisitorNickname(body.nickname);
   const commentBody = cleanText(body.body, 1, 1500, '댓글');
-  validatePassword(body.password);
   await verifyTurnstile(body.turnstile_token, request, env);
 
   let parentId = null;
@@ -209,21 +214,18 @@ async function createComment(postId, request, env) {
     if (!parent || parent.status !== 'visible') {
       throw httpError(404, '답글을 작성할 댓글을 찾을 수 없습니다.');
     }
-    if (parent.parent_id) throw httpError(400, '답글에는 추가 답글을 작성할 수 없습니다.');
     parentId = parent.id;
   }
 
   const clientKey = await requestClientKey(request, env);
-  await enforceRateLimit(`comment:${clientKey}`, 5, 600, env);
+  if (!isOwner) await enforceRateLimit(`comment:${clientKey}`, 5, 600, env);
 
-  const salt = randomBase64(16);
-  const passwordHash = await hashPassword(body.password, salt);
   const id = crypto.randomUUID();
   await env.DB.prepare(
     `INSERT INTO comments
-      (id, post_id, parent_id, nickname, body, password_hash, password_salt)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
-  ).bind(id, postId, parentId, nickname, commentBody, passwordHash, salt).run();
+      (id, post_id, parent_id, nickname, body, password_hash, password_salt, is_owner)
+     VALUES (?, ?, ?, ?, ?, '', '', ?)`,
+  ).bind(id, postId, parentId, nickname, commentBody, isOwner ? 1 : 0).run();
 
   return json({
     comment: {
@@ -232,54 +234,45 @@ async function createComment(postId, request, env) {
       nickname,
       body: commentBody,
       status: 'visible',
+      is_owner: isOwner,
       created_at: new Date().toISOString(),
       updated_at: null,
     },
   }, 201);
 }
 
-async function updateComment(commentId, request, env) {
-  validateCommentId(commentId);
+async function createOwnerSession(request, env) {
+  if (!env.OWNER_AUTH_SECRET) throw httpError(503, '주인장 인증이 설정되지 않았습니다.');
   const body = await readJson(request);
-  validatePassword(body.password);
-  await verifyTurnstile(body.turnstile_token, request, env);
+  const clientKey = await requestClientKey(request, env);
+  await enforceRateLimit(`owner-login:${clientKey}`, 5, 600, env);
+
+  if (typeof body.secret !== 'string' || !timingSafeEqual(body.secret, env.OWNER_AUTH_SECRET)) {
+    throw httpError(403, '주인장 인증 정보가 올바르지 않습니다.');
+  }
+
+  const expiresAt = Math.floor(Date.now() / 1000) + OWNER_SESSION_SECONDS;
+  const payload = base64UrlEncode(JSON.stringify({ role: 'owner', exp: expiresAt }));
+  const signature = await signOwnerPayload(payload, env.OWNER_AUTH_SECRET);
+  return json({ token: `${payload}.${signature}`, expires_at: new Date(expiresAt * 1000).toISOString() });
+}
+
+async function deleteCommentAsOwner(commentId, request, env) {
+  validateCommentId(commentId);
+  if (!(await hasValidOwnerSession(request, env))) {
+    throw httpError(403, '주인장 권한이 필요합니다.');
+  }
 
   const comment = await env.DB.prepare(
     'SELECT * FROM comments WHERE id = ?',
   ).bind(commentId).first();
   if (!comment || comment.status === 'hidden') throw httpError(404, '댓글을 찾을 수 없습니다.');
-  if (!(await verifyPassword(body.password, comment.password_salt, comment.password_hash))) {
-    throw httpError(403, '비밀번호가 올바르지 않습니다.');
-  }
-
-  if (request.method === 'DELETE') {
-    await env.DB.prepare(
-      `UPDATE comments
-       SET status = 'deleted', nickname = '', body = '', updated_at = CURRENT_TIMESTAMP
-       WHERE id = ?`,
-    ).bind(commentId).run();
-    return json({ deleted: true });
-  }
-
-  if (comment.status === 'deleted') throw httpError(409, '삭제된 댓글은 수정할 수 없습니다.');
-  const nickname = cleanText(body.nickname, 2, 24, '닉네임');
-  const commentBody = cleanText(body.body, 1, 1500, '댓글');
   await env.DB.prepare(
     `UPDATE comments
-     SET nickname = ?, body = ?, updated_at = CURRENT_TIMESTAMP
+     SET status = 'deleted', nickname = '', body = '', updated_at = CURRENT_TIMESTAMP
      WHERE id = ?`,
-  ).bind(nickname, commentBody, commentId).run();
-  return json({
-    comment: {
-      id: commentId,
-      parent_id: comment.parent_id || null,
-      nickname,
-      body: commentBody,
-      status: 'visible',
-      created_at: toIsoTimestamp(comment.created_at),
-      updated_at: new Date().toISOString(),
-    },
-  });
+  ).bind(commentId).run();
+  return json({ deleted: true });
 }
 
 async function verifyTurnstile(token, request, env) {
@@ -334,27 +327,6 @@ async function hashVisitor(visitorId, env) {
   return sha256Hex(`${env.VISITOR_HASH_SECRET}:${visitorId}`);
 }
 
-async function hashPassword(password, salt) {
-  const key = await crypto.subtle.importKey(
-    'raw',
-    new TextEncoder().encode(password),
-    'PBKDF2',
-    false,
-    ['deriveBits'],
-  );
-  const bits = await crypto.subtle.deriveBits({
-    name: 'PBKDF2',
-    hash: 'SHA-256',
-    salt: base64Bytes(salt),
-    iterations: PASSWORD_ITERATIONS,
-  }, key, 256);
-  return bytesBase64(new Uint8Array(bits));
-}
-
-async function verifyPassword(password, salt, expectedHash) {
-  return timingSafeEqual(await hashPassword(password, salt), expectedHash);
-}
-
 async function sha256Hex(value) {
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
@@ -373,8 +345,8 @@ function withCors(response, request, env) {
   if (origin && allowedOrigins(env).includes(origin)) {
     headers.set('Access-Control-Allow-Origin', origin);
     headers.set('Vary', 'Origin');
-    headers.set('Access-Control-Allow-Headers', 'Content-Type, X-Webhook-Secret');
-    headers.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
+    headers.set('Access-Control-Allow-Headers', 'Authorization, Content-Type, X-Webhook-Secret');
+    headers.set('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
   }
   return new Response(response.body, { status: response.status, headers });
 }
@@ -410,10 +382,10 @@ function validateCommentId(value) {
   if (!/^[a-f0-9-]{36}$/i.test(value)) throw httpError(400, '올바르지 않은 댓글 ID입니다.');
 }
 
-function validatePassword(value) {
-  if (typeof value !== 'string' || value.length < 4 || value.length > 72) {
-    throw httpError(400, '비밀번호는 4자 이상 72자 이하로 입력해 주세요.');
-  }
+function cleanVisitorNickname(value) {
+  const nickname = cleanText(value, 2, 8, '닉네임');
+  if (nickname === '주인장') throw httpError(400, '사용할 수 없는 닉네임입니다.');
+  return nickname;
 }
 
 function cleanText(value, min, max, label) {
@@ -442,21 +414,53 @@ function timingSafeEqual(left, right) {
   return result === 0;
 }
 
-function randomBase64(length) {
-  const bytes = new Uint8Array(length);
-  crypto.getRandomValues(bytes);
-  return bytesBase64(bytes);
-}
-
 function bytesBase64(bytes) {
   let binary = '';
   for (const byte of bytes) binary += String.fromCharCode(byte);
   return btoa(binary);
 }
 
-function base64Bytes(value) {
-  const binary = atob(value);
-  return Uint8Array.from(binary, (character) => character.charCodeAt(0));
+function base64UrlEncode(value) {
+  return btoa(unescape(encodeURIComponent(value)))
+    .replaceAll('+', '-')
+    .replaceAll('/', '_')
+    .replace(/=+$/, '');
+}
+
+function base64UrlDecode(value) {
+  const padded = value.replaceAll('-', '+').replaceAll('_', '/').padEnd(Math.ceil(value.length / 4) * 4, '=');
+  return decodeURIComponent(escape(atob(padded)));
+}
+
+async function signOwnerPayload(payload, secret) {
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  );
+  const signature = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(payload));
+  return bytesBase64(new Uint8Array(signature))
+    .replaceAll('+', '-')
+    .replaceAll('/', '_')
+    .replace(/=+$/, '');
+}
+
+async function hasValidOwnerSession(request, env) {
+  if (!env.OWNER_AUTH_SECRET) return false;
+  const authorization = request.headers.get('Authorization') || '';
+  if (!authorization.startsWith('Bearer ')) return false;
+  const [payload, signature] = authorization.slice(7).split('.');
+  if (!payload || !signature) return false;
+  const expected = await signOwnerPayload(payload, env.OWNER_AUTH_SECRET);
+  if (!timingSafeEqual(signature, expected)) return false;
+  try {
+    const parsed = JSON.parse(base64UrlDecode(payload));
+    return parsed.role === 'owner' && Number(parsed.exp) > Math.floor(Date.now() / 1000);
+  } catch {
+    return false;
+  }
 }
 
 function findNotionPageId(payload) {

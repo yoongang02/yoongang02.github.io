@@ -112,110 +112,86 @@
     if (!section) return;
 
     const list = section.querySelector('[data-comment-list]');
-    const empty = section.querySelector('[data-comment-empty]');
     const count = section.querySelector('[data-comment-count]');
     const form = section.querySelector('[data-comment-form]');
     const formStatus = section.querySelector('[data-comment-form-status]');
     const submitButton = section.querySelector('[data-comment-submit]');
-    const editCancel = section.querySelector('[data-comment-edit-cancel]');
-    const replyContext = section.querySelector('[data-comment-reply-context]');
-    const replyName = section.querySelector('[data-comment-reply-name]');
-    const replyCancel = section.querySelector('[data-comment-reply-cancel]');
     const deleteDialog = section.querySelector('[data-comment-delete-dialog]');
     const deleteForm = section.querySelector('[data-comment-delete-form]');
     const deleteStatus = section.querySelector('[data-comment-delete-status]');
+    const ownerStorageKey = 'blog-community-owner-session';
     let comments = [];
-    let editingId = null;
-    let replyingTo = null;
+    let ownerToken = localStorage.getItem(ownerStorageKey) || '';
     let deletingId = null;
 
+    updateOwnerMode();
     loadComments();
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
-      setFormStatus(editingId ? '댓글을 수정하고 있습니다…' : '댓글을 등록하고 있습니다…');
+      setFormStatus('댓글을 등록하고 있습니다…');
       submitButton.disabled = true;
       const data = new FormData(form);
 
       try {
-        const token = await getTurnstileToken(siteKey, editingId ? 'comment_edit' : 'comment_create');
-        const payload = {
-          nickname: data.get('nickname'),
-          password: data.get('password'),
-          body: data.get('body'),
-          turnstile_token: token,
-        };
-        if (!editingId && replyingTo) payload.parent_id = replyingTo.id;
-        const path = editingId
-          ? `${apiBase}/api/comments/${encodeURIComponent(editingId)}`
-          : `${apiBase}/api/posts/${encodeURIComponent(postId)}/comments`;
-        await requestJson(path, {
-          method: editingId ? 'PATCH' : 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+        const turnstileToken = await getTurnstileToken(siteKey, 'comment_create');
+        await requestJson(`${apiBase}/api/posts/${encodeURIComponent(postId)}/comments`, {
+          method: 'POST',
+          headers: requestHeaders(),
+          body: JSON.stringify({
+            nickname: data.get('nickname'),
+            body: data.get('body'),
+            turnstile_token: turnstileToken,
+          }),
         });
         form.reset();
-        cancelEdit();
-        cancelReply();
         setFormStatus('댓글이 저장되었습니다.');
         await loadComments();
       } catch (error) {
+        handleOwnerError(error);
         setFormStatus(error.message, true);
       } finally {
         submitButton.disabled = false;
       }
     });
 
-    editCancel.addEventListener('click', () => {
-      form.reset();
-      cancelEdit();
-      cancelReply();
-      setFormStatus('');
-    });
-
-    replyCancel.addEventListener('click', () => {
-      cancelReply();
-      setFormStatus('');
-    });
-
     list.addEventListener('click', (event) => {
-      const actionButton = event.target.closest('[data-comment-action]');
-      if (!actionButton) return;
-      const comment = comments.find(({ id }) => id === actionButton.dataset.commentId);
+      const button = event.target.closest('[data-comment-action]');
+      if (!button) return;
+      const comment = comments.find(({ id }) => id === button.dataset.commentId);
       if (!comment) return;
 
-      if (actionButton.dataset.commentAction === 'edit') {
-        cancelReply();
-        editingId = comment.id;
-        form.elements.nickname.value = comment.nickname;
-        form.elements.body.value = comment.body;
-        form.elements.password.value = '';
-        submitButton.textContent = '댓글 수정';
-        editCancel.hidden = false;
-        focusCommentForm();
+      if (button.dataset.commentAction === 'toggle-replies') {
+        const thread = button.closest('.community-comment-thread');
+        const replies = thread?.querySelector('.community-replies');
+        if (!replies) return;
+        const willOpen = replies.hidden;
+        if (willOpen) {
+          setReplyThreadOpen(thread, true);
+          openReplyForm(comment, replies);
+        } else {
+          closeReplyThread(thread);
+        }
       }
 
-      if (actionButton.dataset.commentAction === 'reply') {
-        cancelEdit();
-        replyingTo = comment;
-        replyName.textContent = comment.nickname;
-        replyContext.hidden = false;
-        submitButton.textContent = '답글 남기기';
-        focusCommentForm();
+      if (button.dataset.commentAction === 'reply') {
+        const thread = button.closest('.community-comment-thread');
+        const replies = thread?.querySelector('.community-replies');
+        if (!replies) return;
+        setReplyThreadOpen(thread, true);
+        openReplyForm(comment, replies);
       }
 
-      if (actionButton.dataset.commentAction === 'delete') {
+      if (button.dataset.commentAction === 'delete') {
         deletingId = comment.id;
         deleteStatus.textContent = '';
-        deleteForm.reset();
         deleteDialog.showModal();
       }
     });
 
     deleteForm.addEventListener('submit', async (event) => {
       event.preventDefault();
-      const submitter = event.submitter?.value;
-      if (submitter === 'cancel') {
+      if (event.submitter?.value === 'cancel') {
         deleteDialog.close();
         deletingId = null;
         return;
@@ -223,120 +199,304 @@
       if (!deletingId) return;
 
       deleteStatus.textContent = '댓글을 삭제하고 있습니다…';
-      const password = new FormData(deleteForm).get('password');
       try {
-        const token = await getTurnstileToken(siteKey, 'comment_delete');
         await requestJson(`${apiBase}/api/comments/${encodeURIComponent(deletingId)}`, {
           method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password, turnstile_token: token }),
+          headers: requestHeaders(),
         });
         deleteDialog.close();
         deletingId = null;
         await loadComments();
       } catch (error) {
+        handleOwnerError(error);
         deleteStatus.textContent = error.message;
       }
     });
 
-    async function loadComments() {
+    async function loadComments(openThreadId = '') {
       try {
         const result = await requestJson(`${apiBase}/api/posts/${encodeURIComponent(postId)}/comments`);
         comments = result.comments || [];
-        renderComments(comments);
+        renderComments(comments, openThreadId);
       } catch (error) {
-        empty.hidden = false;
-        empty.textContent = error.message;
+        setFormStatus(error.message, true);
       }
     }
 
-    function renderComments(items) {
-      list.querySelectorAll('.community-comment').forEach((element) => element.remove());
-      empty.hidden = items.length > 0;
+    function renderComments(items, openThreadId = '') {
+      list.replaceChildren();
       count.textContent = String(items.filter(({ status }) => status === 'visible').length);
 
-      const repliesByParent = new Map();
-      const rootComments = [];
+      const byId = new Map(items.map((comment) => [comment.id, comment]));
+      const children = new Map();
       items.forEach((comment) => {
-        if (!comment.parent_id) {
-          rootComments.push(comment);
-          return;
-        }
-        const replies = repliesByParent.get(comment.parent_id) || [];
-        replies.push(comment);
-        repliesByParent.set(comment.parent_id, replies);
-      });
-
-      rootComments.forEach((comment) => {
-        appendComment(comment);
-        (repliesByParent.get(comment.id) || []).forEach((reply) => appendComment(reply, true));
+        if (!comment.parent_id || !byId.has(comment.parent_id)) return;
+        const group = children.get(comment.parent_id) || [];
+        group.push(comment);
+        children.set(comment.parent_id, group);
       });
 
       items
-        .filter((comment) => comment.parent_id && !items.some(({ id }) => id === comment.parent_id))
-        .forEach((comment) => appendComment(comment, true));
+        .filter((comment) => !comment.parent_id || !byId.has(comment.parent_id))
+        .forEach((root) => list.append(createThread(root, children, byId, root.id === openThreadId)));
     }
 
-    function appendComment(comment, isReply = false) {
-        const article = document.createElement('article');
-        article.className = [
-          'community-comment',
-          isReply ? 'is-reply' : '',
-          comment.status === 'deleted' ? 'is-deleted' : '',
-        ].filter(Boolean).join(' ');
+    function createThread(root, children, byId, isOpen) {
+      const thread = document.createElement('section');
+      thread.className = 'community-comment-thread';
+      thread.dataset.rootId = root.id;
+      thread.append(createCommentCard(root, false, byId));
 
-        const header = document.createElement('header');
-        const author = document.createElement('strong');
-        author.textContent = comment.status === 'deleted' ? '삭제된 댓글' : comment.nickname;
-        const time = document.createElement('time');
-        time.dateTime = comment.created_at;
-        time.textContent = formatDate(comment.updated_at || comment.created_at);
-        header.append(author, time);
+      const descendants = collectDescendants(root.id, children);
+      const replyCount = descendants.filter(({ status }) => status === 'visible').length;
+      if (root.status === 'visible') {
+        const toggle = actionButton(
+          replyCount ? `${replyCount}개의 답글` : '답글 달기',
+          'toggle-replies',
+          root.id,
+          'square-plus',
+        );
+        toggle.className = 'community-reply-toggle';
+        toggle.dataset.replyCount = String(replyCount);
+        toggle.setAttribute('aria-expanded', String(isOpen));
+        toggle.classList.toggle('is-open', isOpen);
+        thread.append(toggle);
+      }
 
-        const body = document.createElement('p');
-        body.textContent = comment.body;
-        article.append(header, body);
+      const replies = document.createElement('div');
+      replies.className = 'community-replies';
+      replies.hidden = !isOpen;
+      descendants.forEach((reply) => replies.append(createCommentCard(reply, true, byId)));
+      thread.append(replies);
+      return thread;
+    }
 
-        if (comment.status === 'visible') {
-          const actions = document.createElement('div');
-          actions.className = 'community-comment-actions';
-          if (!isReply) actions.append(actionButton('답글', 'reply', comment.id));
-          actions.append(actionButton('수정', 'edit', comment.id), actionButton('삭제', 'delete', comment.id));
-          article.append(actions);
+    function createCommentCard(comment, isReply, byId) {
+      const article = document.createElement('article');
+      article.className = [
+        'community-comment',
+        isReply ? 'is-reply' : '',
+        comment.is_owner ? 'is-owner' : '',
+        comment.status === 'deleted' ? 'is-deleted' : '',
+      ].filter(Boolean).join(' ');
+      article.dataset.commentId = comment.id;
+
+      const header = document.createElement('header');
+      const meta = document.createElement('div');
+      meta.className = 'community-comment-meta';
+      const author = document.createElement('strong');
+      author.textContent = comment.status === 'deleted' ? '삭제된 댓글' : comment.nickname;
+      const separator = document.createElement('span');
+      separator.textContent = '·';
+      separator.setAttribute('aria-hidden', 'true');
+      const time = document.createElement('time');
+      time.dateTime = comment.created_at;
+      time.title = formatExactDate(comment.updated_at || comment.created_at);
+      time.textContent = formatRelativeTime(comment.updated_at || comment.created_at);
+      meta.append(author, separator, time);
+      header.append(meta);
+
+      if (ownerToken && comment.status === 'visible') {
+        const actions = document.createElement('div');
+        actions.className = 'community-owner-actions';
+        actions.append(actionButton('댓글 삭제', 'delete', comment.id, 'trash'));
+        header.append(actions);
+      }
+
+      const body = document.createElement('p');
+      if (isReply && comment.status === 'visible') {
+        const parent = byId.get(comment.parent_id);
+        if (parent?.parent_id && parent.nickname) {
+          const mention = document.createElement('span');
+          mention.className = 'community-comment-mention';
+          mention.textContent = `@${parent.nickname} `;
+          body.append(mention);
         }
-        list.append(article);
+      }
+      body.append(document.createTextNode(comment.body));
+      article.append(header, body);
+
+      if (isReply && comment.status === 'visible') {
+        const reply = actionButton('답글 달기', 'reply', comment.id, 'square-plus');
+        reply.className = 'community-reply-add';
+        article.append(reply);
+      }
+      return article;
     }
 
-    function cancelEdit() {
-      editingId = null;
-      if (!replyingTo) submitButton.textContent = '댓글 남기기';
-      editCancel.hidden = true;
+    function collectDescendants(parentId, children) {
+      const result = [];
+      const visit = (id) => {
+        (children.get(id) || []).forEach((child) => {
+          result.push(child);
+          visit(child.id);
+        });
+      };
+      visit(parentId);
+      return result;
     }
 
-    function cancelReply() {
-      replyingTo = null;
-      replyContext.hidden = true;
-      if (!editingId) submitButton.textContent = '댓글 남기기';
+    function openReplyForm(target, container) {
+      clearReplyForms();
+      const replyForm = document.createElement('form');
+      replyForm.className = 'community-inline-reply-form';
+
+      const context = document.createElement('p');
+      context.textContent = ownerToken
+        ? `주인장으로 ${target.nickname || '댓글'}에게 답글`
+        : `${target.nickname || '댓글'}에게 답글`;
+      replyForm.append(context);
+
+      if (!ownerToken) {
+        const nickname = document.createElement('input');
+        nickname.name = 'nickname';
+        nickname.type = 'text';
+        nickname.minLength = 2;
+        nickname.maxLength = 8;
+        nickname.placeholder = '닉네임';
+        nickname.setAttribute('aria-label', '닉네임');
+        nickname.required = true;
+        replyForm.append(nickname);
+      } else {
+        replyForm.classList.add('is-owner');
+      }
+
+      const textarea = document.createElement('textarea');
+      textarea.name = 'body';
+      textarea.rows = 2;
+      textarea.maxLength = 1500;
+      textarea.placeholder = '답글을 입력하세요.';
+      textarea.setAttribute('aria-label', '답글 내용');
+      textarea.required = true;
+      replyForm.append(textarea);
+
+      const footer = document.createElement('div');
+      footer.className = 'community-inline-reply-footer';
+      const status = document.createElement('p');
+      status.setAttribute('aria-live', 'polite');
+      const actions = document.createElement('div');
+      const cancel = document.createElement('button');
+      cancel.type = 'button';
+      cancel.className = 'community-button community-button-secondary';
+      cancel.textContent = '취소';
+      const submit = document.createElement('button');
+      submit.type = 'submit';
+      submit.className = 'community-button';
+      submit.textContent = '작성';
+      actions.append(cancel, submit);
+      footer.append(status, actions);
+      replyForm.append(footer);
+
+      cancel.addEventListener('click', () => {
+        closeReplyThread(replyForm.closest('.community-comment-thread'));
+      });
+      replyForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        submit.disabled = true;
+        status.textContent = '답글을 등록하고 있습니다…';
+        const data = new FormData(replyForm);
+        try {
+          const turnstileToken = await getTurnstileToken(siteKey, 'comment_create');
+          await requestJson(`${apiBase}/api/posts/${encodeURIComponent(postId)}/comments`, {
+            method: 'POST',
+            headers: requestHeaders(),
+            body: JSON.stringify({
+              nickname: data.get('nickname'),
+              body: data.get('body'),
+              parent_id: target.id,
+              turnstile_token: turnstileToken,
+            }),
+          });
+          await loadComments(findRootId(target, comments));
+        } catch (error) {
+          handleOwnerError(error);
+          status.textContent = error.message;
+          submit.disabled = false;
+        }
+      });
+
+      container.append(replyForm);
+      textarea.focus();
     }
 
-    function focusCommentForm() {
-      form.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      form.elements.body.focus();
+    function clearReplyForms(scope = list) {
+      scope.querySelectorAll('.community-inline-reply-form').forEach((replyForm) => replyForm.remove());
+    }
+
+    function setReplyThreadOpen(thread, isOpen) {
+      if (!thread) return;
+      const replies = thread.querySelector('.community-replies');
+      const toggle = thread.querySelector('[data-comment-action="toggle-replies"]');
+      if (!replies) return;
+      replies.hidden = !isOpen;
+      toggle?.classList.toggle('is-open', isOpen);
+      toggle?.setAttribute('aria-expanded', String(isOpen));
+    }
+
+    function closeReplyThread(thread) {
+      if (!thread) return;
+      clearReplyForms(thread);
+      setReplyThreadOpen(thread, false);
+    }
+
+    function findRootId(comment, items) {
+      const byId = new Map(items.map((item) => [item.id, item]));
+      let current = comment;
+      while (current.parent_id && byId.has(current.parent_id)) current = byId.get(current.parent_id);
+      return current.id;
     }
 
     function setFormStatus(message, isError = false) {
       formStatus.textContent = message;
       formStatus.classList.toggle('is-error', isError);
     }
+
+    function requestHeaders() {
+      const headers = { 'Content-Type': 'application/json' };
+      if (ownerToken) headers.Authorization = `Bearer ${ownerToken}`;
+      return headers;
+    }
+
+    function updateOwnerMode() {
+      section.classList.toggle('is-owner-mode', Boolean(ownerToken));
+      const nickname = form.elements.nickname;
+      nickname.hidden = Boolean(ownerToken);
+      nickname.required = !ownerToken;
+      setFormStatus(ownerToken ? '주인장으로 댓글을 작성합니다.' : '');
+    }
+
+    function clearOwnerSession() {
+      ownerToken = '';
+      localStorage.removeItem(ownerStorageKey);
+      updateOwnerMode();
+    }
+
+    function handleOwnerError(error) {
+      if (ownerToken && /주인장 권한/i.test(error.message)) clearOwnerSession();
+    }
   }
 
-  function actionButton(label, action, id) {
+  function actionButton(label, action, id, iconName) {
     const button = document.createElement('button');
     button.type = 'button';
-    button.textContent = label;
+    button.setAttribute('aria-label', label);
+    if (iconName) button.append(commentIcon(iconName));
+    const text = document.createElement('span');
+    text.textContent = label;
+    button.append(text);
     button.dataset.commentAction = action;
     button.dataset.commentId = id;
     return button;
+  }
+
+  function commentIcon(name) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.innerHTML = name === 'trash'
+      ? '<path d="M4 7h16M9 7V4h6v3m-8 0 1 13h8l1-13M10 11v5m4-5v5"/>'
+      : '<rect x="4" y="4" width="16" height="16" rx="2"/><path data-icon-plus d="M12 8v8"/><path d="M8 12h8"/>';
+    return svg;
   }
 
   function getVisitorId() {
@@ -406,10 +566,25 @@
     return data;
   }
 
-  function formatDate(value) {
+  function formatRelativeTime(value) {
+    const elapsed = Math.max(0, Date.now() - new Date(value).getTime());
+    const minute = 60 * 1000;
+    const hour = 60 * minute;
+    const day = 24 * hour;
+    const month = 30 * day;
+    const year = 365 * day;
+    if (elapsed < minute) return '방금 전';
+    if (elapsed < hour) return `${Math.floor(elapsed / minute)}분 전`;
+    if (elapsed < day) return `${Math.floor(elapsed / hour)}시간 전`;
+    if (elapsed < month) return `${Math.floor(elapsed / day)}일 전`;
+    if (elapsed < year) return `${Math.floor(elapsed / month)}개월 전`;
+    return `${Math.floor(elapsed / year)}년 전`;
+  }
+
+  function formatExactDate(value) {
     return new Intl.DateTimeFormat('ko-KR', {
       year: 'numeric',
-      month: 'short',
+      month: 'long',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',

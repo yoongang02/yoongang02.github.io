@@ -1,0 +1,29 @@
+{{ define "main" }}
+<section class="admin-comments" data-owner-admin>
+  <header>
+    <p class="admin-eyebrow">PRIVATE</p>
+    <h1>주인장 댓글 관리</h1>
+    <p>인증 후 같은 브라우저에서 게시글을 열면 주인장으로 댓글과 답글을 작성하고 댓글을 삭제할 수 있습니다.</p>
+  </header>
+
+  <form class="admin-owner-form" data-owner-admin-form>
+    <label>
+      <span>주인장 비밀키</span>
+      <input name="secret" type="password" autocomplete="current-password" required>
+    </label>
+    <div>
+      <p data-owner-admin-status aria-live="polite"></p>
+      <button class="community-button" type="submit">인증</button>
+    </div>
+  </form>
+
+  <div class="admin-owner-actions" data-owner-admin-actions hidden>
+    <p>주인장 모드가 활성화되었습니다.</p>
+    <a href="{{ "/" | relURL }}">사이트로 이동</a>
+    <button type="button" data-owner-admin-logout>인증 해제</button>
+  </div>
+</section>
+
+{{ $script := resources.Get "js/admin-comments.js" | minify | fingerprint }}
+<script defer src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>
+{{ end }}
