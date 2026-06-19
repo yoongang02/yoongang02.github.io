@@ -2,10 +2,6 @@
   margin: 4px 0 15px;
 }
 
-.home-page .header > header {
-  padding-bottom: 1.5rem;
-}
-
 .pegboard-surface {
   position: relative;
   isolation: isolate;
@@ -237,6 +233,10 @@
 }
 
 @media (max-width: 639px) {
+  .home-page .header > header {
+    padding-bottom: 1.5rem;
+  }
+
   .pegboard {
     margin-bottom: 12px;
   }
