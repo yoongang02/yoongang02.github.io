@@ -3,7 +3,10 @@
 {{ $avatar := resources.GetMatch .Site.Params.avatar }}
 {{ $formattedDate := .PublishDate.Format "2006년 1월 2일" }}
 
-<article class="post-shell">
+{{ $postID := .Params.notion_id | default .RelPermalink }}
+{{ $communityEnabled := and .Site.Params.community.enable (or .Site.Params.community.apiBaseURL (and (eq hugo.Environment "development") .Site.Params.community.localApiBaseURL)) }}
+
+<article class="post-shell" data-post-id="{{ $postID }}">
   <header class="post-hero">
     <h1 class="post-title">{{ .Title }}</h1>
 
@@ -12,12 +15,17 @@
         <time datetime="{{ .PublishDate.Format "2006-01-02T15:04:05Z07:00" }}">{{ $formattedDate }}</time>
       </div>
 
-      <button class="post-share-button" type="button" data-copy-url aria-label="게시글 링크 복사">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M10 13a5 5 0 0 0 7.07.07l2-2a5 5 0 0 0-7.07-7.07l-1.15 1.15M14 11a5 5 0 0 0-7.07-.07l-2 2A5 5 0 0 0 12 20l1.15-1.15"/>
-        </svg>
-        <span data-copy-label>공유</span>
-      </button>
+      <div class="post-action-buttons">
+        {{ if $communityEnabled }}
+          {{ partial "single/reaction" . }}
+        {{ end }}
+        <button class="post-share-button" type="button" data-copy-url aria-label="게시글 링크 복사">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M10 13a5 5 0 0 0 7.07.07l2-2a5 5 0 0 0-7.07-7.07l-1.15 1.15M14 11a5 5 0 0 0-7.07-.07l-2 2A5 5 0 0 0 12 20l1.15-1.15"/>
+          </svg>
+          <span data-copy-label>공유</span>
+        </button>
+      </div>
     </div>
 
     {{ partial "tags/chips" (dict "page" . "class" "post-tags" "label" "게시글 태그") }}
@@ -43,6 +51,10 @@
       </section>
 
       <footer class="post-footer">
+        {{ if $communityEnabled }}
+          {{ partial "single/reaction-action" . }}
+        {{ end }}
+
         <section class="post-author-card" aria-label="작성자">
           {{ with $avatar }}
             {{ $authorImage := .Fill "128x128 q90" }}
@@ -68,6 +80,10 @@
             </a>
           {{ end }}
         </nav>
+
+        {{ if $communityEnabled }}
+          {{ partial "single/community-comments" . }}
+        {{ end }}
 
         {{ partial "single/comments/index" . }}
       </footer>

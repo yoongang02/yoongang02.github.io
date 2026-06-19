@@ -7,8 +7,10 @@
     {{ $thumbURL = printf "%s%s" $page.RelPermalink $thumbURL }}
   {{ end }}
 {{ end }}
+{{ $postID := .Params.notion_id | default .RelPermalink }}
+{{ $communityEnabled := and .Site.Params.community.enable (or .Site.Params.community.apiBaseURL (and (eq hugo.Environment "development") .Site.Params.community.localApiBaseURL)) }}
 
-<article class="post-card">
+<article class="post-card" data-post-card-id="{{ $postID }}">
   <a
     href="{{ .Permalink }}"
     class="post-card-media"
@@ -44,6 +46,12 @@
         <time datetime="{{ .PublishDate }}" title='{{ .PublishDate.Format "Mon, Jan 2, 2006, 3:04 PM MST" }}'>
           {{ .PublishDate.Format "2006.01.02" }}
         </time>
+        {{ if $communityEnabled }}
+          <span class="post-card-reactions" aria-label="하트 수">
+            {{ partial "utils/heart-icon" . }}
+            <span data-card-reaction-count>0</span>
+          </span>
+        {{ end }}
       </div>
 
       <a class="post-card-arrow" href="{{ .Permalink }}" aria-label="{{ .Title }} 더보기">

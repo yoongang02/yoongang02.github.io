@@ -1,0 +1,17 @@
+<section class="post-reaction-action" aria-labelledby="post-reaction-title">
+  <div>
+    <strong id="post-reaction-title">이 글이 유용했나요?</strong>
+    <p>게시글이 도움이 되었다면 하트를 남겨주세요.</p>
+  </div>
+  <button
+    class="post-reaction-button"
+    type="button"
+    data-reaction-button
+    aria-label="이 게시글에 하트 남기기"
+    aria-pressed="false"
+  >
+    {{ partial "utils/heart-icon" . }}
+    <span>하트</span>
+    <span data-reaction-count>0</span>
+  </button>
+</section>

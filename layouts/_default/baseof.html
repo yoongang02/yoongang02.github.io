@@ -17,5 +17,12 @@
     </main>
 
     {{- partial "footer/index" . -}}
+
+    {{- with .Site.Params.community -}}
+      {{- if .enable -}}
+        {{- $communityListScript := resources.Get "js/community-list.js" | minify | fingerprint -}}
+        <script defer src="{{ $communityListScript.RelPermalink }}" integrity="{{ $communityListScript.Data.Integrity }}"></script>
+      {{- end -}}
+    {{- end }}
   </body>
 </html>

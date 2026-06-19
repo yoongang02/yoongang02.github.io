@@ -31,3 +31,10 @@ enableEmoji = true
     # theme = "light"
     # lang = "zh-CN"
     # lazyLoading = true
+
+[community]
+    enable = true
+    apiBaseURL = "https://yoongang-blog-community.yoongang02.workers.dev"
+    localApiBaseURL = "http://127.0.0.1:8787"
+    turnstileSiteKey = "0x4AAAAAADnm1_0_30VTarUs"
+    localTurnstileSiteKey = ""

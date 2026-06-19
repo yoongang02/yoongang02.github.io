@@ -13,6 +13,23 @@
 
 <link rel="icon" type="image/x-icon" href="{{ $favicon.RelPermalink }}" />
 
+{{- with .Site.Params.community -}}
+  {{- if .enable -}}
+    {{- $apiBaseURL := .apiBaseURL -}}
+    {{- $turnstileSiteKey := .turnstileSiteKey -}}
+    {{- if eq hugo.Environment "development" -}}
+      {{- $apiBaseURL = .localApiBaseURL | default $apiBaseURL -}}
+      {{- $turnstileSiteKey = .localTurnstileSiteKey -}}
+    {{- end -}}
+    {{- with $apiBaseURL }}
+      <meta name="community-api-base" content="{{ strings.TrimRight "/" . }}">
+    {{- end }}
+    {{- with $turnstileSiteKey }}
+      <meta name="community-turnstile-site-key" content="{{ . }}">
+    {{- end }}
+  {{- end -}}
+{{- end }}
+
 {{ if .Site.Config.Services.GoogleAnalytics.ID }}
 <!-- Google Analytics -->
 <script

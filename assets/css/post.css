@@ -94,7 +94,14 @@
   font-size: 0.95rem;
 }
 
-.post-share-button {
+.post-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.post-share-button,
+.post-reaction-button {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -109,14 +116,37 @@
   transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
 }
 
+.post-reaction-summary {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--ui-text-secondary);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.post-reaction-summary svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .post-share-button:hover,
-.post-share-button.is-copied {
+.post-share-button.is-copied,
+.post-reaction-button:hover,
+.post-reaction-button.is-reacted {
   color: var(--post-accent);
   border-color: var(--post-accent);
   background: var(--post-accent-soft);
 }
 
-.post-share-button svg {
+.post-share-button svg,
+.post-reaction-button svg {
   width: 17px;
   height: 17px;
   fill: none;
@@ -124,6 +154,17 @@
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.post-reaction-button.is-reacted svg {
+  fill: currentColor;
+}
+
+.post-share-button:disabled,
+.post-reaction-button:disabled,
+.community-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
 }
 
 .post-tags {
@@ -339,6 +380,37 @@
   margin-top: 6rem;
 }
 
+.post-reaction-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 1.25rem 1.4rem;
+  border: 1px solid var(--ui-surface-strong);
+  border-radius: var(--ui-control-radius);
+  background: var(--ui-surface);
+}
+
+.post-reaction-action strong {
+  color: var(--ui-text-primary);
+  font-size: 1rem;
+}
+
+.post-reaction-action p {
+  margin: 0.2rem 0 0;
+  color: var(--ui-text-secondary);
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.post-reaction-action .post-reaction-button {
+  flex: 0 0 auto;
+  color: var(--post-accent);
+  border-color: var(--post-accent);
+  background: var(--ui-bg);
+}
+
 .post-author-card {
   display: flex;
   align-items: center;
@@ -407,6 +479,278 @@
   text-align: right;
 }
 
+.community-comments {
+  margin-top: 4.5rem;
+}
+
+.community-comments-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--ui-surface-strong);
+}
+
+.community-comments-header h2 {
+  margin: 0;
+  padding: 0;
+  font-size: 1.5rem;
+}
+
+.community-comments-header > span {
+  color: var(--post-accent);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.community-comment-form {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border: 1px solid var(--ui-surface-strong);
+  border-radius: var(--ui-control-radius);
+  background: var(--ui-surface);
+}
+
+.community-reply-context {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.2rem 0.1rem;
+  color: var(--ui-text-secondary);
+  font-size: 0.8rem;
+}
+
+.community-reply-context[hidden] {
+  display: none;
+}
+
+.community-reply-context strong,
+.community-reply-context button {
+  color: var(--post-accent);
+}
+
+.community-reply-context button {
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.community-comment-form-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.community-comment-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  flex: 1 1 auto;
+  gap: 0.6rem;
+}
+
+.community-comment-form label,
+.community-dialog label {
+  display: grid;
+  gap: 0.4rem;
+  color: var(--ui-text-primary);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.community-comment-form input,
+.community-comment-form textarea,
+.community-dialog input {
+  width: 100%;
+  border: 1px solid var(--ui-surface-strong);
+  border-radius: calc(var(--ui-control-radius) - 3px);
+  padding: 0.7rem 0.8rem;
+  color: var(--ui-text-primary);
+  background: var(--ui-bg);
+  font: inherit;
+  font-size: 0.95rem;
+}
+
+.community-comment-form textarea {
+  min-height: 88px;
+  resize: vertical;
+  line-height: 1.65;
+}
+
+.community-comment-form input:focus,
+.community-comment-form textarea:focus,
+.community-dialog input:focus {
+  border-color: var(--post-accent);
+  outline: 2px solid color-mix(in srgb, var(--post-accent) 25%, transparent);
+  outline-offset: 1px;
+}
+
+.community-comment-form-footer {
+  display: flex;
+  min-height: 1.25rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.community-comment-form-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 0.5rem;
+}
+
+.community-comment-form-footer p,
+.community-dialog-status {
+  margin: 0;
+  color: var(--ui-text-secondary);
+  font-size: 0.82rem;
+  text-align: left;
+}
+
+.community-comment-form-footer p.is-error,
+.community-dialog-status {
+  color: #e03131;
+}
+
+.community-comment-form-footer p:last-child {
+  margin-left: auto;
+}
+
+.community-dialog-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.community-button {
+  min-height: 38px;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--post-accent);
+  border-radius: var(--ui-pill-radius);
+  color: var(--ui-bg);
+  background: var(--post-accent);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.community-button-secondary {
+  color: var(--ui-text-secondary);
+  border-color: var(--ui-surface-strong);
+  background: var(--ui-bg);
+}
+
+.community-button-danger {
+  color: #ffffff;
+  border-color: #e03131;
+  background: #e03131;
+}
+
+.community-comment-list {
+  margin-top: 2rem;
+}
+
+.community-empty {
+  margin: 0;
+  padding: 2rem 0;
+  color: var(--ui-text-secondary);
+  text-align: center;
+}
+
+.community-comment {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--ui-surface-strong);
+}
+
+.community-comment.is-reply {
+  margin-left: 2rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--post-accent-soft);
+}
+
+.community-comment > header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.community-comment strong {
+  color: var(--ui-text-primary);
+  font-size: 0.95rem;
+}
+
+.community-comment time {
+  color: var(--ui-text-secondary);
+  font-size: 0.75rem;
+}
+
+.community-comment > p {
+  margin: 0.75rem 0 0;
+  color: var(--ui-text-primary);
+  font-size: 0.95rem;
+  line-height: 1.75;
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+.community-comment.is-deleted > p {
+  color: var(--ui-text-secondary);
+  font-style: italic;
+}
+
+.community-comment-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.community-comment-actions button {
+  color: var(--ui-text-secondary);
+  font-size: 0.76rem;
+}
+
+.community-comment-actions button:hover {
+  color: var(--post-accent);
+}
+
+.community-dialog {
+  width: min(100% - 32px, 420px);
+  padding: 0;
+  border: 1px solid var(--ui-surface-strong);
+  border-radius: var(--ui-control-radius);
+  color: var(--ui-text-primary);
+  background: var(--ui-bg);
+}
+
+.community-dialog::backdrop {
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.community-dialog form {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.community-dialog h3,
+.community-dialog p {
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.community-dialog-actions {
+  justify-content: flex-end;
+}
+
+.community-turnstile {
+  position: fixed;
+  left: -9999px;
+  bottom: 0;
+}
+
 @media (max-width: 1199px) {
   .post-layout {
     grid-template-columns: minmax(0, var(--post-content-width));
@@ -451,6 +795,15 @@
     display: none;
   }
 
+  .post-reaction-action {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .post-reaction-action .post-reaction-button {
+    align-self: flex-end;
+  }
+
   .post-layout {
     margin-top: 2.25rem;
   }
@@ -478,5 +831,36 @@
 
   .post-neighbor-next {
     grid-column: 1;
+  }
+
+  .community-comments {
+    margin-top: 3.5rem;
+  }
+
+  .community-comment-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .community-comment-form-bottom {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .community-comment-form-actions {
+    align-self: flex-end;
+  }
+
+  .community-comment-form-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .community-comment-form-footer p:last-child {
+    margin-left: 0;
+  }
+
+  .community-comment.is-reply {
+    margin-left: 0.75rem;
+    padding-left: 0.75rem;
   }
 }
