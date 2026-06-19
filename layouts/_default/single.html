@@ -33,12 +33,9 @@
   <div class="post-layout">
     <div class="post-main-column">
       {{ if findRE "<(h[1-3])" .Content }}
-        <details class="post-toc-mobile" data-post-toc>
-          <summary>목차</summary>
-          <div class="post-toc-mobile-content">
-            {{ .TableOfContents }}
-          </div>
-        </details>
+        <aside class="post-toc-inline" data-post-toc>
+          {{ partial "single/toc-nav" . }}
+        </aside>
       {{ end }}
 
       <section class="post-content">
@@ -79,7 +76,7 @@
     {{ if findRE "<(h[1-3])" .Content }}
       <aside class="post-toc" aria-label="목차" data-post-toc>
         <div class="post-toc-inner">
-          {{ .TableOfContents }}
+          {{ partial "single/toc-nav" . }}
         </div>
       </aside>
     {{ end }}

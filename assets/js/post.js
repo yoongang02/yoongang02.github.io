@@ -38,10 +38,4 @@
 
   updateActiveHeading();
   window.addEventListener('scroll', updateActiveHeading, { passive: true });
-
-  document.querySelectorAll('.post-toc-mobile a').forEach((link) => {
-    link.addEventListener('click', () => {
-      link.closest('details')?.removeAttribute('open');
-    });
-  });
 })();

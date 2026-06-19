@@ -294,7 +294,7 @@
   transform: translateX(26px);
 }
 
-.post-toc-mobile {
+.post-toc-inline {
   display: none;
 }
 
@@ -307,20 +307,20 @@
   border-left: 1px solid var(--ui-surface-strong);
 }
 
-.post-toc ul {
+.post-toc-nav ul {
   margin: 0;
   list-style: none;
 }
 
-.post-toc ul ul {
+.post-toc-nav ul ul {
   margin-left: 0.75rem;
 }
 
-.post-toc li {
+.post-toc-nav li {
   margin: 0.45rem 0;
 }
 
-#content .post-toc a {
+#content .post-toc-nav a {
   display: block;
   color: var(--ui-text-secondary);
   font-size: 0.875rem;
@@ -330,8 +330,8 @@
   transition: color 150ms ease;
 }
 
-#content .post-toc a:hover,
-#content .post-toc a.is-active {
+#content .post-toc-nav a:hover,
+#content .post-toc-nav a.is-active {
   color: var(--post-accent);
 }
 
@@ -421,50 +421,11 @@
     transform: none;
   }
 
-  .post-toc-mobile {
+  .post-toc-inline {
     display: block;
     margin-bottom: 2.25rem;
-    border: 1px solid var(--ui-surface-strong);
-    border-radius: var(--ui-control-radius);
-    background: var(--ui-surface);
-  }
-
-  .post-toc-mobile summary {
-    padding: 0.85rem 1rem;
-    color: var(--ui-text-primary);
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 700;
-    list-style-position: inside;
-  }
-
-  .post-toc-mobile-content {
-    padding: 0 1rem 0.85rem;
-  }
-
-  .post-toc-mobile ul {
-    margin: 0;
-    list-style: none;
-  }
-
-  .post-toc-mobile ul ul {
-    margin-left: 0.85rem;
-  }
-
-  .post-toc-mobile li {
-    margin: 0.45rem 0;
-  }
-
-  #content .post-toc-mobile a {
-    color: var(--ui-text-secondary);
-    font-size: 0.875rem;
-    font-weight: 500;
-    text-decoration: none;
-  }
-
-  #content .post-toc-mobile a:hover,
-  #content .post-toc-mobile a.is-active {
-    color: var(--post-accent);
+    padding-left: 1rem;
+    border-left: 1px solid var(--ui-surface-strong);
   }
 }
 
@@ -483,7 +444,7 @@
   }
 
   .post-meta-row {
-    align-items: flex-start;
+    align-items: center;
   }
 
   .post-share-button span {
@@ -494,7 +455,7 @@
     margin-top: 2.25rem;
   }
 
-  .post-toc-mobile {
+  .post-toc-inline {
     margin-bottom: 1.75rem;
   }
 
