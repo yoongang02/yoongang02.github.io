@@ -2,14 +2,17 @@
 
 {{ partial "home/pegboard" . }}
 
-<div class="py-2 flex flex-col gap-1">
-  <h2 class="title-small">Latest Posts</h2>
-</div>
+{{ $pages := where .Site.RegularPages "Section" "not in" (slice "admin") }}
+{{ with first 6 ($pages.ByDate.Reverse) }}
+  <div class="py-2 flex flex-col gap-1">
+    <h2 class="title-small section-title">Latest Posts</h2>
+  </div>
 
-<section class="post-grid pb-10">
-  {{ range first 6 (.Site.RegularPages.ByDate.Reverse) }}
-    {{ partial "list/default" . }}
-  {{ end }}
-</section>
+  <section class="post-grid pb-10">
+    {{ range . }}
+      {{ partial "list/default" . }}
+    {{ end }}
+  </section>
+{{ end }}
 
 {{ end }}

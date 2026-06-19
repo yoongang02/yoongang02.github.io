@@ -12,7 +12,7 @@
 | `Title` | 제목 | 예 | 게시글 제목 |
 | `Published` | 체크박스 | 예 | 체크한 글만 발행 |
 | `Date` | 날짜 | 예 | 게시일 및 정렬 |
-| `Section` | 선택 | 예 | `posts`, `study`, `projects`, `ideas` 중 게시 위치 |
+| `Section` | 선택 | 예 | `study`, `projects`, `reviews` 중 게시 위치 |
 | `Slug` | 텍스트 | 아니요 | URL 경로. 비우면 제목으로 자동 생성 |
 | `Description` | 텍스트 | 아니요 | 검색엔진 및 링크 공유용 메타 설명 |
 | `Tags` | 다중 선택 | 아니요 | 게시글 태그 |
@@ -38,7 +38,7 @@ npm run sync:notion
 hugo server -D
 ```
 
-동기화된 글은 기본적으로 `content/posts/<slug>/index.md`에 생성되고, Notion 이미지는 같은 글의 `notion-assets` 폴더에 내려받습니다.
+`Section`을 비운 글은 기본적으로 `content/reviews/<slug>/index.md`에 생성되고, Notion 이미지는 같은 글의 `notion-assets` 폴더에 내려받습니다.
 
 ## 4. Notion 자동화를 통한 즉시 발행
 

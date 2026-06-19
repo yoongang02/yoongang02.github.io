@@ -10,7 +10,7 @@ await loadEnv(join(ROOT, '.env'));
 const token = process.env.NOTION_API_KEY;
 const configuredDataSourceId = process.env.NOTION_DATA_SOURCE_ID;
 const configuredDatabaseId = process.env.NOTION_DATABASE_ID;
-const contentRoot = resolve(ROOT, process.env.NOTION_CONTENT_DIR || 'content/posts');
+const contentRoot = resolve(ROOT, process.env.NOTION_CONTENT_DIR || 'content/reviews');
 const propertyNames = {
   title: process.env.NOTION_TITLE_PROPERTY || 'Title',
   slug: process.env.NOTION_SLUG_PROPERTY || 'Slug',
