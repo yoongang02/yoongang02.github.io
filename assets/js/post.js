@@ -76,6 +76,7 @@
           body: JSON.stringify({ visitor_id: visitorId, turnstile_token: token }),
         });
         updateReaction(result);
+        if (result.reacted) playReactionAnimation();
       } catch (error) {
         button.title = error.message;
       } finally {
@@ -90,6 +91,19 @@
       button.classList.toggle('is-reacted', reacted);
       button.setAttribute('aria-pressed', String(reacted));
       button.setAttribute('aria-label', reacted ? '이 게시글의 하트 취소하기' : '이 게시글에 하트 남기기');
+    }
+
+    function playReactionAnimation() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const icon = button.querySelector('svg');
+      if (!icon) return;
+
+      const burst = document.createElement('span');
+      burst.className = 'post-reaction-burst';
+      burst.setAttribute('aria-hidden', 'true');
+      burst.append(icon.cloneNode(true));
+      button.append(burst);
+      burst.addEventListener('animationend', () => burst.remove(), { once: true });
     }
   }
 
