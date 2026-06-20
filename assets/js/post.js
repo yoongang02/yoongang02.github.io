@@ -536,7 +536,7 @@
       widgetId = window.turnstile.render(container, {
         sitekey: siteKey,
         size: 'flexible',
-        appearance: 'interaction-only',
+        appearance: 'always',
         action,
         callback(token) {
           finish(() => resolve(token));
