@@ -16,7 +16,11 @@ export default {
       }
 
       if (url.pathname === '/webhooks/notion' && request.method === 'POST') {
-        return handleNotionWebhook(request, env);
+        return handleNotionWebhook(request, env, 'publish');
+      }
+
+      if (url.pathname === '/webhooks/notion/unpublish' && request.method === 'POST') {
+        return handleNotionWebhook(request, env, 'unpublish');
       }
 
       assertAllowedOrigin(request, env);
@@ -69,7 +73,7 @@ export default {
   },
 };
 
-async function handleNotionWebhook(request, env) {
+async function handleNotionWebhook(request, env, action) {
   const secret = request.headers.get('X-Webhook-Secret');
   if (!env.NOTION_WEBHOOK_SECRET || !timingSafeEqual(secret || '', env.NOTION_WEBHOOK_SECRET)) {
     return json({ error: 'Unauthorized' }, 401);
@@ -88,9 +92,10 @@ async function handleNotionWebhook(request, env) {
       'X-GitHub-Api-Version': '2026-03-10',
     },
     body: JSON.stringify({
-      event_type: 'notion-publish',
+      event_type: action === 'unpublish' ? 'notion-unpublish' : 'notion-publish',
       client_payload: {
         source: 'notion-automation',
+        action,
         received_at: new Date().toISOString(),
         trigger_page_id: findNotionPageId(payload),
       },
@@ -101,7 +106,7 @@ async function handleNotionWebhook(request, env) {
     console.error('GitHub dispatch failed', response.status, await response.text());
     return json({ error: 'GitHub dispatch failed' }, 502);
   }
-  return json({ accepted: true }, 202);
+  return json({ accepted: true, action }, 202);
 }
 
 async function getReaction(postId, url, env) {

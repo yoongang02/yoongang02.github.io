@@ -91,6 +91,14 @@ Notion 데이터베이스에서 `Published`가 체크될 때 webhook을 전송�
 발행 취소도 즉시 반영하려면 `Published`가 체크 해제될 때 같은 webhook을 보내는 자동화를 하나 더
 추가합니다.
 
+- Trigger: `Published`가 체크 해제될 때
+- URL: `<Worker URL>/webhooks/notion/unpublish`
+- Header: `X-Webhook-Secret`
+- Header value: Worker에 저장한 `NOTION_WEBHOOK_SECRET`
+
+취소 webhook은 GitHub Actions에 `notion-unpublish` 이벤트를 보냅니다. 워크플로가 공개 글 전체를
+다시 동기화하면 체크 해제된 Notion 생성 글이 Hugo 콘텐츠에서 제거되고 GitHub Pages가 재배포됩니다.
+
 ## 7. 배포 전 확인
 
 ```bash

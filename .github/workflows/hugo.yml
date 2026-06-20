@@ -5,7 +5,7 @@ on:
     branches: ["main"]
   workflow_dispatch:
   repository_dispatch:
-    types: [notion-publish]
+    types: [notion-publish, notion-unpublish]
 
 permissions:
   contents: read

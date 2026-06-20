@@ -52,6 +52,7 @@ GitHub 저장소의 **Settings → Secrets and variables → Actions**에 다음
 - `main` 브랜치에 push
 - Actions 화면에서 수동 실행
 - `notion-publish` repository dispatch 이벤트 수신
+- `notion-unpublish` repository dispatch 이벤트 수신
 
 Notion 데이터베이스 자동화와 Cloudflare Worker를 이용한 즉시 발행 설정은
 [Notion 자동화 발행 가이드](notion-automation-publishing.html)를 참고하세요.
