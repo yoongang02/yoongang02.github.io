@@ -47,8 +47,24 @@
   });
 
   function updateState() {
-    const authenticated = Boolean(localStorage.getItem(storageKey));
+    const authenticated = hasValidStoredSession();
     form.hidden = authenticated;
     actions.hidden = !authenticated;
+  }
+
+  function hasValidStoredSession() {
+    const token = localStorage.getItem(storageKey) || '';
+    if (!token) return false;
+    try {
+      const encodedPayload = token.split('.')[0];
+      const normalized = encodedPayload.replaceAll('-', '+').replaceAll('_', '/');
+      const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
+      const payload = JSON.parse(atob(padded));
+      if (payload.role === 'owner' && Number(payload.exp) > Math.floor(Date.now() / 1000)) return true;
+    } catch {
+      // Invalid or legacy owner sessions are cleared below.
+    }
+    localStorage.removeItem(storageKey);
+    return false;
   }
 })();

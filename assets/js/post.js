@@ -121,7 +121,7 @@
     const deleteStatus = section.querySelector('[data-comment-delete-status]');
     const ownerStorageKey = 'blog-community-owner-session';
     let comments = [];
-    let ownerToken = localStorage.getItem(ownerStorageKey) || '';
+    let ownerToken = readOwnerToken();
     let deletingId = null;
 
     updateOwnerMode();
@@ -471,8 +471,26 @@
       updateOwnerMode();
     }
 
+    function readOwnerToken() {
+      const token = localStorage.getItem(ownerStorageKey) || '';
+      if (!token) return '';
+      try {
+        const encodedPayload = token.split('.')[0];
+        const normalized = encodedPayload.replaceAll('-', '+').replaceAll('_', '/');
+        const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
+        const payload = JSON.parse(atob(padded));
+        if (payload.role === 'owner' && Number(payload.exp) > Math.floor(Date.now() / 1000)) return token;
+      } catch {
+        // Invalid or legacy owner sessions are cleared below.
+      }
+      localStorage.removeItem(ownerStorageKey);
+      return '';
+    }
+
     function handleOwnerError(error) {
-      if (ownerToken && /주인장 권한/i.test(error.message)) clearOwnerSession();
+      if (ownerToken && /주인장 권한/i.test(error.message)) {
+        clearOwnerSession();
+      }
     }
   }
 

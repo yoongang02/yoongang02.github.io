@@ -203,7 +203,11 @@ async function listComments(postId, env) {
 async function createComment(postId, request, env) {
   validatePostId(postId);
   const body = await readJson(request);
+  const ownerSessionRequested = (request.headers.get('Authorization') || '').startsWith('Bearer ');
   const isOwner = await hasValidOwnerSession(request, env);
+  if (ownerSessionRequested && !isOwner) {
+    throw httpError(403, '주인장 권한이 만료되었습니다. 관리 페이지에서 다시 인증해 주세요.');
+  }
   const nickname = isOwner ? '주인장' : cleanVisitorNickname(body.nickname);
   const commentBody = cleanText(body.body, 1, 1500, '댓글');
   await verifyTurnstile(body.turnstile_token, request, env);
