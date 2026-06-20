@@ -34,7 +34,9 @@ const generatedPaths = new Set();
 for (const page of pages) {
   const title = readTitle(page.properties[propertyNames.title]) || 'Untitled';
   const requestedSlug = readText(page.properties[propertyNames.slug]);
-  const slug = slugify(requestedSlug || title || page.id);
+  const requestedSlugValue = slugify(requestedSlug);
+  const titleSlug = slugify(title);
+  const slug = requestedSlugValue || titleSlug || shortId(page.id);
   const requestedSection = readSelect(page.properties[propertyNames.section]);
   const section = safePathSegment(requestedSection);
   const pageRoot = section ? join(contentRoot, '..', section, slug) : join(contentRoot, slug);
@@ -59,6 +61,9 @@ for (const page of pages) {
 
   await writeFile(outputPath, `${frontMatter}\n${GENERATED_MARKER}\n\n${body.trim()}\n`, 'utf8');
   generatedPaths.add(outputPath);
+  if (requestedSlug && !requestedSlugValue) {
+    console.warn(`Invalid Slug "${requestedSlug}" for "${title}"; generated "${slug}" from the title instead.`);
+  }
   console.log(`Synced: ${relative(ROOT, outputPath)}`);
 }
 
@@ -358,7 +363,7 @@ function escapeMarkdown(value) {
 
 function slugify(value) {
   return String(value)
-    .normalize('NFKD')
+    .normalize('NFKC')
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9가-힣]+/g, '-')
