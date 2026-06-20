@@ -518,29 +518,42 @@
       container.className = 'community-turnstile';
       document.body.append(container);
       let widgetId;
+      let settled = false;
+      const timeoutId = window.setTimeout(() => {
+        finish(() => reject(new Error('자동 요청 방지 인증 시간이 초과되었습니다. 다시 시도해 주세요.')));
+      }, 20000);
       const cleanup = () => {
         if (widgetId !== undefined) window.turnstile.remove(widgetId);
         container.remove();
       };
+      const finish = (callback) => {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(timeoutId);
+        cleanup();
+        callback();
+      };
       widgetId = window.turnstile.render(container, {
         sitekey: siteKey,
-        execution: 'execute',
+        size: 'flexible',
         appearance: 'interaction-only',
         action,
         callback(token) {
-          cleanup();
-          resolve(token);
+          finish(() => resolve(token));
         },
         'error-callback'() {
-          cleanup();
-          reject(new Error('자동 요청 방지 인증을 완료하지 못했습니다.'));
+          finish(() => reject(new Error('자동 요청 방지 인증을 완료하지 못했습니다.')));
         },
         'expired-callback'() {
-          cleanup();
-          reject(new Error('자동 요청 방지 인증이 만료되었습니다.'));
+          finish(() => reject(new Error('자동 요청 방지 인증이 만료되었습니다.')));
+        },
+        'timeout-callback'() {
+          finish(() => reject(new Error('자동 요청 방지 인증 시간이 초과되었습니다. 다시 시도해 주세요.')));
+        },
+        'unsupported-callback'() {
+          finish(() => reject(new Error('현재 브라우저에서는 자동 요청 방지 인증을 사용할 수 없습니다.')));
         },
       });
-      window.turnstile.execute(widgetId);
     });
   }
 
