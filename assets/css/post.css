@@ -886,8 +886,11 @@
 
 .community-turnstile {
   position: fixed;
-  left: -9999px;
-  bottom: 0;
+  z-index: 1000;
+  left: 50%;
+  bottom: 1.5rem;
+  max-width: calc(100vw - 2rem);
+  transform: translateX(-50%);
 }
 
 @media (max-width: 1199px) {
