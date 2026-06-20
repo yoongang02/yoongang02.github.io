@@ -295,7 +295,14 @@ async function verifyTurnstile(token, request, env) {
     }),
   });
   const result = await response.json();
-  if (!result.success) throw httpError(403, '자동 요청 방지 인증에 실패했습니다.');
+  if (!result.success) {
+    console.error('Turnstile validation failed', {
+      errors: result['error-codes'] || [],
+      hostname: result.hostname || '',
+      action: result.action || '',
+    });
+    throw httpError(403, '자동 요청 방지 인증에 실패했습니다.');
+  }
 }
 
 async function enforceRateLimit(key, limit, windowSeconds, env) {
