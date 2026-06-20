@@ -524,8 +524,8 @@
       };
       widgetId = window.turnstile.render(container, {
         sitekey: siteKey,
-        size: 'invisible',
         execution: 'execute',
+        appearance: 'interaction-only',
         action,
         callback(token) {
           cleanup();
